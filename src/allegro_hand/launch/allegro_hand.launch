@@ -131,7 +131,7 @@
   <!-- Keyboard handler (if arg KEYBOARD is true) -->
   <node name="keyboard_$(arg NUM)"
         pkg="allegro_hand_keyboard"
-        type="allegro_hand_keyboard_node"
+        type="allegro_hand_keyboard"
         output="screen"
         if="$(arg KEYBOARD)">
     <remap from="allegroHand/lib_cmd" to="allegroHand_$(arg NUM)/lib_cmd"/>
