@@ -178,11 +178,12 @@ from the downloaded pcan folder: this theoretically creates the devices files if
 the system has not done it automatically.
 
 3. Build the sources
-
+```
     catkin_make
     source devel/setup.bash
-
+```
 4. quick start
+```
     cd src/allegro_hand_controllers/launch
     roslaunch allegro_hand.launch HAND:=right
-
+```
