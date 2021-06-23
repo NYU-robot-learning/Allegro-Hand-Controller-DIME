@@ -12,8 +12,11 @@ find_package(catkin REQUIRED COMPONENTS
   libpcan
   roscpp
   sensor_msgs
+  ll4ma_kdl
 # roslaunch  # Disabled due to testing
 )
+find_package(cmake_modules REQUIRED)
+find_package(Eigen REQUIRED)
 
 ###################################
 ## catkin specific configuration ##
@@ -21,9 +24,10 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES allegro_hand_controllers
-  CATKIN_DEPENDS allegro_hand_driver bhand libpcan roscpp sensor_msgs
-#  DEPENDS
+  CATKIN_DEPENDS allegro_hand_driver bhand libpcan roscpp sensor_msgs ll4ma_kdl
+  DEPENDS Eigen
 )
+#add_library(allegro_node src/kdl_controller.cpp)
 
 ###########
 ## Build ##
@@ -31,9 +35,10 @@ catkin_package(
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${Eigen_INCLUDE_DIRS}
 )
 
-add_library(allegro_node src/allegro_node.cpp)
+add_library(allegro_node src/allegro_node.cpp src/kdl_controller.cpp)
 
 ## Declare executables
 add_executable(allegro_node_grasp src/allegro_node_grasp.cpp)
@@ -41,15 +46,6 @@ target_link_libraries(allegro_node_grasp allegro_node ${catkin_LIBRARIES})
 
 add_executable(allegro_node_pd src/allegro_node_pd.cpp)
 target_link_libraries(allegro_node_pd allegro_node ${catkin_LIBRARIES})
-
-add_executable(allegro_node_sim src/allegro_node_sim.cpp)
-target_link_libraries(allegro_node_sim allegro_node ${catkin_LIBRARIES})
-
-add_executable(allegro_node_velsat src/allegro_node_velsat.cpp)
-target_link_libraries(allegro_node_velsat allegro_node ${catkin_LIBRARIES})
-
-add_executable(allegro_node_torque src/allegro_node_torque.cpp)
-target_link_libraries(allegro_node_torque allegro_node ${catkin_LIBRARIES})
 
 # This is disabled until roslaunch tests can pass required arguments.
 # roslaunch_add_file_check(launch/allegro_hand.launch)
@@ -62,8 +58,7 @@ install(TARGETS
   allegro_node
   allegro_node_grasp
   allegro_node_pd
-  allegro_node_torque
-  allegro_node_velsat
+  #kdl_controller
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

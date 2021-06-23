@@ -28,7 +28,7 @@
   <!-- The inclusion of which_hand in the zero.yaml file has been deprecated.
        Which hand (left/right) must now be specified as an argument when launching the Allegro Hand
        as an input for both the robot_description and for the grasping library controllers. -->
-  <arg name="HAND"/>
+  <arg name="HAND" default="right"/>
   <arg name="NUM" default="0"/>
   <arg name="GAZEBO" default="false"/>
 
@@ -43,7 +43,7 @@
     <arg name="NUM" value="$(arg NUM)"/>
   </include>
 
-  <arg name="CONTROLLER" default="grasp"/> <!-- grasp, pd, velsat  -->
+  <arg name="CONTROLLER" default="pd"/> <!-- grasp, pd, velsat  -->
   <!-- Controllers include:
        -grasp *
        -pd
@@ -95,6 +95,7 @@
 
     <rosparam file="$(arg PARAMS_DIR)/gains_pd.yaml" command="load" />
     <rosparam file="$(arg PARAMS_DIR)/gains_velSat.yaml" command="load" />
+    <rosparam file="$(arg PARAMS_DIR)/shared.yaml" command="load" />
     <rosparam file="$(arg PARAMS_DIR)/initial_position.yaml" command="load" />
 
     <!-- Set the CAN channel automatically (using detect_pcan.py) if the
@@ -135,7 +136,7 @@
     <remap from="allegroHand/lib_cmd" to="allegroHand_$(arg NUM)/lib_cmd"/>
   </node>
 
-
-
+      <!-- Logger node -->
+  <node pkg="allegro_hand" type="allegro_logger.py" name="logger" />
 
 </launch>

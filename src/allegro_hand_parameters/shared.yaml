@@ -1,0 +1,7 @@
+parameters:
+  loop_rate: 300
+
+  g_vector:
+    x: 0
+    y: 0
+    z: -9.8

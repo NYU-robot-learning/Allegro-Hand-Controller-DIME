@@ -28,7 +28,7 @@
   <!-- The inclusion of which_hand in the zero.yaml file has been deprecated.
        Which hand (left/right) must now be specified as an argument when launching the Allegro Hand
        as an input for both the robot_description and for the grasping library controllers. -->
-  <arg name="HAND"/>
+  <arg name="HAND" default="right"/>
   <arg name="NUM" default="0"/>
   <arg name="GAZEBO" default="false"/>
 
@@ -43,7 +43,7 @@
     <arg name="NUM" value="$(arg NUM)"/>
   </include>
 
-  <arg name="CONTROLLER" default="grasp"/> <!-- grasp, pd, velsat  -->
+  <arg name="CONTROLLER" default="pd"/> <!-- grasp, pd, velsat  -->
   <!-- Controllers include:
        -grasp *
        -pd
@@ -161,8 +161,5 @@
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
 	args="-urdf -model rrbot -param robot_description"
         if="$(arg GAZEBO)" /> 
-
-
-
 
 </launch>
