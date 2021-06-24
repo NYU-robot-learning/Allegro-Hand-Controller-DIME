@@ -103,7 +103,7 @@ class Logger(object):
         return np.clip(action, -MAX_ANGLE, MAX_ANGLE)
 
 if __name__ == '__main__':
-    log_path = '/home/robot-lab/allegro_hand_v4/allegro_ws/allegro_hand_ros_v4/src/allegro_hand/log/'    
+    log_path = '/home/grail/catkin_ws/src/allegro_hand_ros_v4/src/allegro_hand/log'    
     L = Logger(log_path)
 
     r = rospy.Rate(300)

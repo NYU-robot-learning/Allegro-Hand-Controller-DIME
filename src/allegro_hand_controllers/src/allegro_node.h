@@ -15,6 +15,11 @@ using namespace allegro;
 #include "ros/ros.h"
 #include "sensor_msgs/JointState.h"
 #include "std_msgs/String.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <boost/thread.hpp>
+#include <chrono>
+#include <Eigen/Dense>
 
 // Forward declaration.
 class AllegroHandDrv;
@@ -24,6 +29,8 @@ class AllegroHandDrv;
 // Topic names: current & desired JointState, named grasp to command.
 const std::string JOINT_STATE_TOPIC = "allegroHand/joint_states";
 const std::string DESIRED_STATE_TOPIC = "allegroHand/joint_cmd";
+const std::string COMMANDED_JOINT_STATE_TOPIC = "allegroHand/commanded_joint_states";
+const std::string GRAV_COMP_TOPIC = "allegroHand/grav_comp_torques";
 const std::string LIB_CMD_TOPIC = "allegroHand/lib_cmd";
 
 class AllegroNode {
@@ -68,16 +75,25 @@ class AllegroNode {
   // ROS stuff
   ros::NodeHandle nh;
   ros::Publisher joint_state_pub;
+  ros::Publisher commanded_joint_state_pub;
+  ros::Publisher grav_comp_torques_pub;
   ros::Subscriber joint_cmd_sub;
 
   // Store the current and desired joint states.
   sensor_msgs::JointState current_joint_state;
   sensor_msgs::JointState desired_joint_state;
+  sensor_msgs::JointState commanded_joint_states;
+  sensor_msgs::JointState grav_comp_torques;
+ 
 
   // ROS Time
   ros::Time tstart;
   ros::Time tnow;
   double dt;
+  double sample_rate;
+  double write_rate;
+  std::chrono::time_point<std::chrono::system_clock> begin_time, end_time,write_time;
+  std::vector<std::chrono::time_point<std::chrono::system_clock>> dt_clocks;
 
   // CAN device
   allegro::AllegroHandDrv *canDevice;

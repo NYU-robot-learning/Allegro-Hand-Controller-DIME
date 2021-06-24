@@ -61,6 +61,9 @@ AllegroNode::AllegroNode(bool sim /* = false */) {
 
   // Start ROS time
   tstart = ros::Time::now();
+  sample_rate = 0.005;// sample rate for computing velocity
+  write_rate = 0.005;// write rate
+
   
   // Advertise current joint state publisher and subscribe to desired joint
   // states.
@@ -96,6 +99,7 @@ void AllegroNode::updateController() {
 
   // Calculate loop time;
   tnow = ros::Time::now();
+      
   dt = 1e-9 * (tnow - tstart).nsec;
 
   // When running gazebo, sometimes the loop gets called *too* often and dt will
@@ -129,13 +133,13 @@ void AllegroNode::updateController() {
       // low-pass filtering:
       for (int i = 0; i < DOF_JOINTS; i++) {
         current_position_filtered[i] = (0.6 * current_position_filtered[i]) +
-                                       (0.198 * previous_position[i]) +
-                                       (0.198 * current_position[i]);
+                                       (0.2 * previous_position[i]) +
+                                       (0.2 * current_position[i]);
         current_velocity[i] =
                 (current_position_filtered[i] - previous_position_filtered[i]) / dt;
         current_velocity_filtered[i] = (0.6 * current_velocity_filtered[i]) +
-                                       (0.198 * previous_velocity[i]) +
-                                       (0.198 * current_velocity[i]);
+                                       (0.2 * previous_velocity[i]) +
+                                       (0.2 * current_velocity[i]);
         current_velocity[i] = (current_position[i] - previous_position[i]) / dt;
       }
 
