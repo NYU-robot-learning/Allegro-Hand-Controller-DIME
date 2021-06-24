@@ -10,7 +10,7 @@ SUB_TOPIC_NAME = '/allegroHand_0/joint_states'
 PUB_TOPIC_NAME = '/allegroHand_0/joint_cmd'
 MAX_ANGLE = 0.3
 
-YAML_PATH = '/home/robot-lab/allegro_hand_v4/allegro_ws/allegro_hand_ros_v4/src/allegro_hand_parameters/poses.yaml'
+YAML_PATH = '/home/grail/catkin_ws/src/allegro_hand_ros_v4/src/allegro_hand_parameters/poses.yaml'
 
 # actions = [
 #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

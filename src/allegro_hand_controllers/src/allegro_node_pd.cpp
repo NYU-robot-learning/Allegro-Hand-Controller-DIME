@@ -19,6 +19,14 @@ double home_pose[DOF_JOINTS] =
                 5.0, -5.0, 50.0, 45.0, 60.0, 25.0, 15.0, 45.0
         };
 
+
+Eigen::VectorXd tau_g;
+
+Eigen::VectorXd current_position_eigen((int)DOF_JOINTS);
+Eigen::VectorXd desired_position_eigen((int)DOF_JOINTS);
+Eigen::VectorXd current_velocity_eigen((int)DOF_JOINTS);
+Eigen::VectorXd tau_pos = Eigen::VectorXd::Zero(DOF_JOINTS);
+
 vector<double> K_p = {
   1.0, 2.0, 2.0, 2.0,
   1.0, 2.0, 2.0, 2.0,
@@ -178,6 +186,7 @@ std::string gravityVector[3] = {
         "~shared/parameters/g_vector/z"
 };
 
+allegroKDL kdl_comp(g_vec,loop_rate);
 
 // Constructor subscribes to topics.
 AllegroNodePD::AllegroNodePD()
@@ -205,6 +214,9 @@ AllegroNodePD::AllegroNodePD()
     
   commanded_joint_state_pub = nh.advertise<sensor_msgs::JointState>(COMMANDED_JOINT_STATE_TOPIC, 3);
   grav_comp_torques_pub = nh.advertise<sensor_msgs::JointState>(GRAV_COMP_TOPIC, 3);
+
+  kdl_comp.load_gains(K_p,K_d,traj_K_p,traj_K_d,traj_K_i,vel_K_d,max_tau_des,max_delta_q,max_q_vel);
+
 }
 
 AllegroNodePD::~AllegroNodePD() {
@@ -253,15 +265,10 @@ void AllegroNodePD::computeDesiredTorque() {
   // NOTE: here we just compute and set the desired_torque class member
   // variable.
 
-  allegroKDL kdl_comp(g_vec,loop_rate);
-  kdl_comp.load_gains(K_p,K_d,traj_K_p,traj_K_d,traj_K_i,vel_K_d,max_tau_des,max_delta_q,max_q_vel);
-  
-  Eigen::VectorXd tau_g;
-
-  Eigen::VectorXd current_position_eigen((int)DOF_JOINTS);
-  Eigen::VectorXd desired_position_eigen((int)DOF_JOINTS);
-  Eigen::VectorXd current_velocity_eigen((int)DOF_JOINTS);
-  Eigen::VectorXd tau_pos = Eigen::VectorXd::Zero(DOF_JOINTS);
+  // for (int i = 0; i < DOF_JOINTS; i++) {
+  //     desired_torque[i] = 0.0;
+  //   }
+  // return;
 
   for (int iterator=0; iterator < DOF_JOINTS; iterator++) {
     current_position_eigen[iterator] = current_position_filtered[iterator];
