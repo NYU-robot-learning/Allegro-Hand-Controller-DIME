@@ -69,7 +69,9 @@
 
   <!-- Load the robot description directly from the xacro file. (NOTE: store it
        in two parameter names.) -->
-  <param name="robot_description" textfile="$(find allegro_hand_description)/allegro_hand_description_$(arg HAND).urdf" />
+  <param name="robot_description"
+         command="$(find xacro)/xacro
+                  $(find allegro_hand_description)/allegro_hand_description_$(arg HAND).xacro"/>
 
   <!-- Allegro Hand controller and communication node. -->
   <node name="allegroHand_$(arg HAND)_$(arg NUM)"
