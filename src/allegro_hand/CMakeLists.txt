@@ -57,3 +57,6 @@ install(DIRECTORY launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/
   FILES_MATCHING PATTERN "*.launch"
 )
+
+## Setup for Python package
+catkin_python_setup()
