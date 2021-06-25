@@ -94,8 +94,7 @@ Setting up the ROS Noetic workspace
 ```
 Make sure your ROS_PACKAGE_PATH is set properly.
 ```
-    source opt/ros/noetic/setup.bash
-    echo $ROS_PACKAGE_PATH /home/youruser/catkin_ws/src:/opt/ros/noetic/share
+    echo $ROS_PACKAGE_PATH /home/<<youruser>>/catkin_ws/src:/opt/ros/noetic/share
 ```
 
 
