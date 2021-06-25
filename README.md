@@ -48,7 +48,7 @@ Install the drivers:
     make clean
     make NET=NO_NETDEV_SUPPORT
     sudo make install
-    sudo /sbin/modprobe pcan
+    sudo modprobe pcan
 
 Test that the interface is installed properly with:
 
