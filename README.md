@@ -36,14 +36,15 @@ a peak-systems pcan to usb adapter.
 
 1. Install these packages
 
-    sudo apt-get install libpopt-dev ros-kinetic-libpcan
+    sudo apt-get install libpopt-dev
 
 2. Download driver: https://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-8.12.0.tar.gz
 
 Install the drivers:
 
+    cd ~/Downloads
     tar -xvzf peak-linux-driver-8.12.0.tar.gz
-    cd peak-linux-driver-8.12.0.tar.gz
+    cd peak-linux-driver-8.12.0
     make clean
     make NET=NO_NETDEV_SUPPORT
     sudo make install
