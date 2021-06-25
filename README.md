@@ -28,11 +28,109 @@ non-compatible changes between the two version are:
  - Modified the PD hand controller with gravity compensation with a better loop rate that sets the joint state to
    the desired joint state.
 
+Installing the PCAN driver
+--------------------------
+
+Before using the hand, you must install the pcan drivers. This assumes you have
+a peak-systems pcan to usb adapter.
+
+1. Install these packages
+
+    sudo apt-get install libpopt-dev ros-kinetic-libpcan
+
+2. Download driver: https://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-8.12.0.tar.gz
+
+Install the drivers:
+
+    tar -xvzf peak-linux-driver-8.12.0.tar.gz
+    cd peak-linux-driver-8.12.0.tar.gz
+    make clean
+    make NET=NO_NETDEV_SUPPORT
+    sudo make install
+    sudo /sbin/modprobe pcan
+
+Test that the interface is installed properly with:
+
+     cat /proc/pcan
+
+You should see some stuff streaming.
+
+When the hand is connected, you should see pcanusb0 or pcanusb1 in the list of
+available interfaces:
+
+    ls -l /dev/pcan*
+
+If you do not see any available files, you may need to run:
+
+    sudo ./driver/pcan_make_devices 2
+
+from the downloaded pcan folder: this theoretically creates the devices files if
+the system has not done it automatically.
+
+3. Download PCAN API: https://www.peak-system.com/quick/BasicLinux
+
+Install the API:
+
+    tar -xvzf pcan_basic_linux-4.1.1
+    cd PCAN_Basic_Linux-4.1.1/pcanbasic
+    make
+    sudo make install
+
+
+Setting up the ROS Noetic workspace
+------------------------------------
+
+1. Installing ROS Noetic: http://wiki.ros.org/noetic/Installation/Ubuntu
+
+2. Creating a catkin workspace: 
+```
+    source /opt/ros/noetic/setup.bash
+    mkdir -p ~/catkin_ws/src
+    cd ~/catkin_ws/
+    catkin_make
+    source devel/setup.bash
+```
+Make sure your ROS_PACKAGE_PATH is set properly.
+```
+    source opt/ros/noetic/setup.bash
+    echo $ROS_PACKAGE_PATH /home/youruser/catkin_ws/src:/opt/ros/noetic/share
+```
+
+
+Setting up the Allegro Hand Controller
+------------------------------------
+
+1. Clone the repository
+```
+    cd ~/catkin_ws/src/
+    git clone https://github.com/NYU-robot-learning/Allegro-hand-controller-noetic
+    cd Allegro-hand-controller-noetic/src/
+    git clone https://bitbucket.org/robot-learning/ll4ma_kdl
+    git clone https://bitbucket.org/robot-learning/ll4ma_robots_description
+
+```
+2. Build the sources
+```
+    cd ~/catkin_ws/
+    catkin_make
+    source devel/setup.bash
+```
+3. Quick start
+```
+    roslaunch allegro_hand allegro_hand.launch 
+```
+
+4. Using the python package to run poses
+```
+    cd ~/catkin_ws/src/Allegro-hand-controller-noetic/
+    python src/allegro_hand/scripts/allegro_poser.py
+```
+
 Launch file instructions:
 ------------------------
 
 There is now a single file,
-[allegro_hand.launch](allegro_hand_controllers/launch/allegro_hand.launch)
+[allegro_hand.launch](allegro_hand/launch/allegro_hand.launch)
 that starts the hand. It takes many arguments, but at a minimum you must specify
 the handedness:
 
@@ -110,7 +208,7 @@ Useful Links
 ------------
 
  * [Allegro Hand wiki](http://wiki.wonikrobotics/AllegroHand/wiki).
- * [ROS wiki for original package](http://www.ros.org/wiki/allegro_hand_ros).
+ * [ROS wiki for original package with Kinetic](http://www.ros.org/wiki/allegro_hand_ros_v4).
 
 
 Controlling More Than One Hand
@@ -133,92 +231,3 @@ fall under the enumerated "allegroHand_#" namespaces, the parameter
 global. When launching a second hand, this parameter is overwritten. I have yet
 to find a way to have a separate enumerated "robot_decription" parameter for
 each hand. If you have any info on this, please advise.
-
-
-Installing the PCAN driver
---------------------------
-
-Before using the hand, you must install the pcan drivers. This assumes you have
-a peak-systems pcan to usb adapter.
-
-1. Install these packages
-
-    sudo apt-get install libpopt-dev ros-kinetic-libpcan
-
-2. Download driver: https://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-8.12.0.tar.gz
-
-Install the drivers:
-
-    tar -xvzf peak-linux-driver-8.12.0.tar.gz
-    cd peak-linux-driver-8.12.0.tar.gz
-    make clean
-    make NET=NO_NETDEV_SUPPORT
-    sudo make install
-    sudo /sbin/modprobe pcan
-
-Test that the interface is installed properly with:
-
-     cat /proc/pcan
-
-You should see some stuff streaming.
-
-When the hand is connected, you should see pcanusb0 or pcanusb1 in the list of
-available interfaces:
-
-    ls -l /dev/pcan*
-
-If you do not see any available files, you may need to run:
-
-    sudo ./driver/pcan_make_devices 2
-
-from the downloaded pcan folder: this theoretically creates the devices files if
-the system has not done it automatically.
-
-3. Download PCAN API: https://www.peak-system.com/quick/BasicLinux
-
-Install the API:
-
-    tar -xvzf pcan_basic_linux-4.1.1
-    cd PCAN_Basic_Linux-4.1.1/pcanbasic
-    make
-    sudo make install
-
-
-Setting up the ROS Noetic workspace
-------------------------------------
-
-1. Installing ROS Noetic: http://wiki.ros.org/noetic/Installation/Ubuntu
-
-2. Creating a catkin workspace: 
-```
-    source /opt/ros/noetic/setup.bash
-    mkdir -p ~/catkin_ws/src
-    cd ~/catkin_ws/
-    catkin_make
-    source devel/setup.bash
-```
-Make sure your ROS_PACKAGE_PATH is set properly.
-```
-    source opt/ros/noetic/setup.bash
-    echo $ROS_PACKAGE_PATH /home/youruser/catkin_ws/src:/opt/ros/noetic/share
-```
-
-3. Clone the repository
-```
-    cd ~/catkin_ws/src/
-    git clone https://github.com/NYU-robot-learning/Allegro-hand-controller-noetic
-    cd Allegro-hand-controller-noetic/src/
-    git clone https://bitbucket.org/robot-learning/ll4ma_kdl
-    git clone https://bitbucket.org/robot-learning/ll4ma_robots_description
-
-```
-3. Build the sources
-```
-    cd ~/catkin_ws/
-    catkin_make
-    source devel/setup.bash
-```
-4. quick start
-```
-    roslaunch allegro_hand allegro_hand.launch 
-```
