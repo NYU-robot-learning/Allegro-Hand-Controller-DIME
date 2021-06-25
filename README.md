@@ -1,22 +1,15 @@
 # allegro_hand_ros
 
-Allegro Hand ROS
+Allegro Hand ROS Noetic
 ================================
 
-This is the official release to control Allegro Hand with ROS Kinetic.
-Mostly, it is based on the old release of Allegro Hand ros package and the interfaces 
-and controllers have been improved and rewritten much by Felix Duballet from EPFL. 
-Thank you for the contribution.
+This is a modified release to control Allegro Hand with ROS Noetic.
+Mostly, it is based on the original release of Allegro Hand ros package (by simlab robotics).
 
-You can find old release of the [hand ros package][1].
+You can find original release of the [hand ros package][1].
 [1]: https://github.com/simlabrobotics/allegro_hand_ros_v4
 
-It improves significantly upon the old release, simplifies the launch file structure,
-updates the package/node names to
-have a more consistent structure, improves the build process by creating a
-common driver, introduces an AllegroNode C++ class that reduces the amount of
-duplicated code. It also provides a python library that can control the hand
-directly.
+It provides a python package that can control the hand directly.
 
 It also provides the BHand library directly in this package (including both
 32-bit and 64-bit versions, though 32-bit systems will need to update the
@@ -26,16 +19,13 @@ At this point no effort has been made to be backwards compatible. Some of the
 non-compatible changes between the two version are:
 
  - Put all of the controllers into one *package* (allegro_hand_controllers) and
-   made each controller a different node (allegro_node_XXXX): grasp, pd, velsat,
-   and sim.
+   made each controller a different node (allegro_node_XXXX): grasp and pd.
  - Single launch file with arguments instead of multiple launch files with
    repeated code.
  - Both the parameter and description files are now ROS packages, so that
    `rospack find` works with them.
- - These packages will likely not work with pre-hydro versions (only tested on
-   ROS Kinetic so far, please let me know if this works on other distributions).
- - Added a torque controller (from @nisommer).
- - Added a 'simulated' pass-through hand controller that sets the joint state to
+ - Added logger, position and torque controllers.
+ - Modified the PD hand controller with gravity compensation with a better loop rate that sets the joint state to
    the desired joint state.
 
 Launch file instructions:
@@ -46,13 +36,14 @@ There is now a single file,
 that starts the hand. It takes many arguments, but at a minimum you must specify
 the handedness:
 
-    roslaunch allegro_hand_controllers allegro_hand.launch HAND:=right
+    roslaunch allegro_hand allegro_hand.launch
 
 Optional (recommended) arguments:
 
           NUM:=0|1|...
           ZEROS:=/path/to/zeros_file.yaml
-          CONTROLLER:=grasp|pd|velsat|torque|sim
+          HAND:=right|left (default is right)
+          CONTROLLER:=pd|grasp (default is pd)
           RESPAWN:=true|false   Respawn controller if it dies.
           KEYBOARD:=true|false  (default is true)
           AUTO_CAN:=true|false  (default is true)
@@ -70,7 +61,7 @@ The second launch file is for visualization, it is included in
 it separately (with `VISUALIZE:=false`), for example if you want to start rviz separately
 (and keep it running):
 
-    roslaunch allegro_hand_controllers allegro_viz.launch HAND:=right
+    roslaunch allegro_hand allegro_viz.launch
 
 Note that you should also specify the hand `NUM` parameter in the viz launch if
 the hand number is not zero.
@@ -87,9 +78,6 @@ Packages
  subscribers):
    * grasp: Apply various pre-defined grasps, including gravity compensation.
    * pd: Joint space control: save and hold positions.
-   * velsat: velocity saturation joint space control (supposedly experimental)
-   * torque: Direct torque control.
-   * sim: Just pass desired joint states through as current joint states.
  * **allegro_hand_description** xacro descriptions for the kinematics of the
      hand, rviz configuration and meshes.
  * **allegro_hand_keyboard** Node that sends the commanded grasps. All commands
@@ -97,19 +85,25 @@ Packages
      other controllers.
  * **allegro_hand_parameters** All necessary parameters for loading the hand:
    * gains_pd.yaml: Controller gains for PD controller.
-   * gains_velSat.yaml: Controller gains and parameters for velocity saturation
-           controller.
    * initial_position.yaml: Home position for the hand.
    * zero.yaml: Offset and servo directions for each of the 16 joints, and some
            meta information about the hand.
    * zero_files/ Zero files for all hands.
  * **bhand** Library files for the predefined grasps, available in 32 and 64 bit
      versions. 64 bit by default, update symlink for 32 bit.
+ * **ll4ma_kdl** Kinematics Dynamics Library made by LL4MA lab for generating the 
+     gravity compensation torque and PD torque. (Can be separately downloaded from
+     https://bitbucket.org/robot-learning/ll4ma_kdl)
+ * **ll4ma_robots_description** urdfs and xacro descriptions for the kinematics of 
+     the hand (primarily to support the kdl package). (Can be separately downloaded 
+     from https://bitbucket.org/robot-learning/ll4ma_robots_description)
+
 
 Note on polling (from Wonik Robotics): The preferred sampling method is utilizing the
 Hand's own real time clock running @ 333Hz by polling the CAN communication
 (polling = true, default). In fact, ROS's interrupt/sleep combination might
-cause instability in CAN communication resulting unstable hand motions.
+cause instability in CAN communication resulting unstable hand motions. We have used a 
+loop rate of 300Hz.
 
 
 Useful Links
@@ -151,11 +145,14 @@ a peak-systems pcan to usb adapter.
 
     sudo apt-get install libpopt-dev ros-kinetic-libpcan
 
-2. Download latest drivers: http://www.peak-system.com/fileadmin/media/linux/index.htm#download
+2. Download driver: https://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-8.12.0.tar.gz
 
 Install the drivers:
 
-    make clean; make NET=NO_NETDEV_SUPPORT
+    tar -xvzf peak-linux-driver-8.12.0.tar.gz
+    cd peak-linux-driver-8.12.0.tar.gz
+    make clean
+    make NET=NO_NETDEV_SUPPORT
     sudo make install
     sudo /sbin/modprobe pcan
 
@@ -177,13 +174,51 @@ If you do not see any available files, you may need to run:
 from the downloaded pcan folder: this theoretically creates the devices files if
 the system has not done it automatically.
 
+3. Download PCAN API: https://www.peak-system.com/quick/BasicLinux
+
+Install the API:
+
+    tar -xvzf pcan_basic_linux-4.1.1
+    cd PCAN_Basic_Linux-4.1.1/pcanbasic
+    make
+    sudo make install
+
+
+Setting up the ROS Noetic workspace
+------------------------------------
+
+1. Installing ROS Noetic: http://wiki.ros.org/noetic/Installation/Ubuntu
+
+2. Creating a catkin workspace: 
+```
+    source /opt/ros/noetic/setup.bash
+    mkdir -p ~/catkin_ws/src
+    cd ~/catkin_ws/
+    catkin_make
+    source devel/setup.bash
+```
+Make sure your ROS_PACKAGE_PATH is set properly.
+```
+    source opt/ros/noetic/setup.bash
+    echo $ROS_PACKAGE_PATH /home/youruser/catkin_ws/src:/opt/ros/noetic/share
+```
+
+3. Clone the repository
+```
+    cd ~/catkin_ws/src/
+    git clone https://github.com/NYU-robot-learning/Allegro-hand-controller-noetic
+    cd Allegro-hand-controller-noetic/src/
+    git clone https://bitbucket.org/robot-learning/ll4ma_kdl
+    git clone https://bitbucket.org/robot-learning/ll4ma_robots_description
+
+```
 3. Build the sources
 ```
+    cd ~/catkin_ws/
     catkin_make
     source devel/setup.bash
 ```
 4. quick start
 ```
-    cd src/allegro_hand_controllers/launch
-    roslaunch allegro_hand.launch HAND:=right
+    roslaunch allegro_hand allegro_hand.launch 
 ```
