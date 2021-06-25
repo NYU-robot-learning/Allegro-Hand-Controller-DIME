@@ -43,8 +43,8 @@ a peak-systems pcan to usb adapter.
 Install the drivers:
 
     cd ~/Downloads
-    tar -xvzf peak-linux-driver-8.12.0.tar.gz
-    cd peak-linux-driver-8.12.0
+    tar -xvzf peak-linux-driver-x.x.x.tar.gz
+    cd peak-linux-driver-x.x.x
     make clean
     make NET=NO_NETDEV_SUPPORT
     sudo make install
@@ -71,12 +71,13 @@ the system has not done it automatically.
 3. Download PCAN API: https://www.peak-system.com/quick/BasicLinux
 
 Install the API:
+```
     cd ~/Downloads/
-    tar -xvzf pcan_basic_linux-4.1.1
-    cd PCAN_Basic_Linux-4.1.1/pcanbasic
+    tar -xvzf pcan_basic_linux-4.x.x.tar.gz
+    cd PCAN_Basic_Linux-4.x.x/libpcanbasic
     make
     sudo make install
-
+```
 
 Setting up the ROS Noetic workspace
 ------------------------------------
