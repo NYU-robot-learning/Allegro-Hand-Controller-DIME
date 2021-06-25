@@ -122,7 +122,7 @@ Setting up the Allegro Hand Controller
 ```
 4. Build the sources
 ```
-    cd ~/catkin_ws/
+    cd ~/catkin_ws/src/Allegro-hand-controller-noetic/
     catkin_make
     source devel/setup.bash
 ```
