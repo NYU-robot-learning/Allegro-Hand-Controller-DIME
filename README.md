@@ -71,7 +71,7 @@ the system has not done it automatically.
 3. Download PCAN API: https://www.peak-system.com/quick/BasicLinux
 
 Install the API:
-
+    cd ~/Downloads/
     tar -xvzf pcan_basic_linux-4.1.1
     cd PCAN_Basic_Linux-4.1.1/pcanbasic
     make
