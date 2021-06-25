@@ -133,8 +133,9 @@ Setting up the Allegro Hand Controller
 
 6. Using the python package to run poses
 ```
+    pip3 install Ipython pyyaml
     cd ~/catkin_ws/src/Allegro-hand-controller-noetic/
-    python src/allegro_hand/scripts/allegro_poser.py
+    python3 src/allegro_hand/scripts/allegro_poser.py
 ```
 
 Launch file instructions:
