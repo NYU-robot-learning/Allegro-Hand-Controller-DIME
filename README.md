@@ -36,7 +36,7 @@ a peak-systems pcan to usb adapter.
 
 1. Install these packages
 
-    sudo apt-get install libpopt-dev
+    sudo apt-get install cmake gcc g++ libpopt-dev
 
 2. Download driver: https://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-8.12.0.tar.gz
 
