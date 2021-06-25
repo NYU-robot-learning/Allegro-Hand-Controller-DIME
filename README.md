@@ -92,7 +92,7 @@ Setting up the ROS Noetic workspace
     catkin_make
     source devel/setup.bash
 ```
-Make sure your ROS_PACKAGE_PATH is set properly.
+Make sure your ROS_PACKAGE_PATH is set properly (change the user path in the below command).
 ```
     echo $ROS_PACKAGE_PATH /home/<<youruser>>/catkin_ws/src:/opt/ros/noetic/share
 ```
@@ -101,7 +101,11 @@ Make sure your ROS_PACKAGE_PATH is set properly.
 Setting up the Allegro Hand Controller
 ------------------------------------
 
-1. Clone the repository
+1. Install ros-noetic-libpcan:
+```
+    sudo apt-get install ros-noetic-libpcan
+```
+2. Clone the repository
 ```
     cd ~/catkin_ws/src/
     git clone https://github.com/NYU-robot-learning/Allegro-hand-controller-noetic
@@ -110,18 +114,24 @@ Setting up the Allegro Hand Controller
     git clone https://bitbucket.org/robot-learning/ll4ma_robots_description
 
 ```
-2. Build the sources
+3. Installing dartsim:
+```
+    sudo apt-add-repository ppa:dartsim/ppa
+    sudo apt-get update
+    sudo apt-get install libdart6-all-dev
+```
+4. Build the sources
 ```
     cd ~/catkin_ws/
     catkin_make
     source devel/setup.bash
 ```
-3. Quick start
+5. Quick start
 ```
     roslaunch allegro_hand allegro_hand.launch 
 ```
 
-4. Using the python package to run poses
+6. Using the python package to run poses
 ```
     cd ~/catkin_ws/src/Allegro-hand-controller-noetic/
     python src/allegro_hand/scripts/allegro_poser.py
