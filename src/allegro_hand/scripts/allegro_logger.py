@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-import rospy
+#!/usr/bin/python3
 
 from allegro_robot.allegro_hand_control import AllegroEnv
 

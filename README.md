@@ -112,7 +112,11 @@ Setting up the Allegro Hand Controller
     cd Allegro-hand-controller-noetic/src/
     git clone https://bitbucket.org/robot-learning/ll4ma_kdl
     git clone https://bitbucket.org/robot-learning/ll4ma_robots_description
-
+```
+Comment the following lines (94 and 95) in ~/catkin_ws/src/Allegro-hand-controller-noetic/src/ll4ma_kdl/CMakeLists.txt:
+```
+add_executable(dynamics_negation_node src/dart_dynamics_negation.cpp)
+target_link_libraries(dynamics_negation_node manipulator_kdl ${DART_LIBRARIES} ${catkin_LIBRARIES})
 ```
 3. Installing dartsim:
 ```
