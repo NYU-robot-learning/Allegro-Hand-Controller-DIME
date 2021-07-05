@@ -41,4 +41,6 @@
 # Vim intermediate files
 *.swp
 
+# Log files
+/src/allegro_hand/log/*
 
