@@ -5,6 +5,7 @@
 
 #include "allegro_node.h"
 #include "allegro_hand_driver/AllegroHandDrv.h"
+#include "std_msgs/Float64MultiArray.h"
 
 std::string jointNames[DOF_JOINTS] =
         {

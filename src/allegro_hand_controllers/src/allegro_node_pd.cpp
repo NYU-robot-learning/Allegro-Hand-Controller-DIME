@@ -5,6 +5,8 @@ using namespace std;
 #include <stdio.h>
 #include <vector>
 
+#include "std_msgs/Float64MultiArray.h"
+
 #include "ros/ros.h"
 
 #define RADIANS_TO_DEGREES(radians) ((radians) * (180.0 / M_PI))
@@ -75,8 +77,11 @@ double max_tau_des=0.65;
 // Loop rate < 333Hz is recommended since states are received at 333Hz.
 double loop_rate = 300.0;
 
-// TODO: Convert this to a ROS subscriber when robot is attached.
-std::vector<double> g_vec={0.0,0.0,-9.8};
+// TODO: Convert this to a ROS subscriber when robot is attached.\
+// Upright position
+std::vector<double> g_vec={0.0, 0.0, -9.8};
+// std::vector<double> g_vec={0.0, -9.8, 0.0};
+// std::vector<double> g_vec={-9.8, 0.0, 0.0};
 
 // Rosparam names
 // K_p values
@@ -201,6 +206,8 @@ AllegroNodePD::AllegroNodePD()
   joint_cmd_sub = nh.subscribe(
           DESIRED_STATE_TOPIC, 1, &AllegroNodePD::setJointCallback, this);
                 
+  grav_rot_sub = nh.subscribe(GRAV_ROT_TOPIC, 1, //300, // queue size
+                                &AllegroNodePD::rotationAnglesCallback, this);
   
   grav_comp_torques.position.resize(0);
   grav_comp_torques.velocity.resize(0);
@@ -261,14 +268,16 @@ void AllegroNodePD::setJointCallback(const sensor_msgs::JointState &msg) {
   control_hand_ = true;
 }
 
+void AllegroNodePD::rotationAnglesCallback(const std_msgs::Float64MultiArray &msg) {
+  frame_rotation_angles = msg;
+  // ROS_INFO("Frame rotation values: [%f %f %f %f]", frame_rotation_angles.data[0], frame_rotation_angles.data[1], frame_rotation_angles.data[2], frame_rotation_angles.data[3]);
+
+}
+
 void AllegroNodePD::computeDesiredTorque() {
   // NOTE: here we just compute and set the desired_torque class member
   // variable.
 
-  // for (int i = 0; i < DOF_JOINTS; i++) {
-  //     desired_torque[i] = 0.0;
-  //   }
-  // return;
 
   for (int iterator=0; iterator < DOF_JOINTS; iterator++) {
     current_position_eigen[iterator] = current_position_filtered[iterator];

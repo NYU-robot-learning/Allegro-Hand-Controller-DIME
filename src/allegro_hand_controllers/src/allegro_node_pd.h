@@ -3,6 +3,8 @@
 
 #include "allegro_node.h"
 
+#include "std_msgs/Float64MultiArray.h"
+
 
 // Joint-space PD control of the Allegro hand.
 //
@@ -24,6 +26,8 @@ class AllegroNodePD : public AllegroNode {
   void libCmdCallback(const std_msgs::String::ConstPtr &msg);
 
   void setJointCallback(const sensor_msgs::JointState &msg);
+
+  void rotationAnglesCallback(const std_msgs::Float64MultiArray &desired);
 
   // Loads all gains and initial positions from the parameter server.
   void initController(const std::string &whichHand);

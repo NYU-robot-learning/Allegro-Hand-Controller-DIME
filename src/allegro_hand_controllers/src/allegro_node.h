@@ -15,6 +15,7 @@ using namespace allegro;
 #include "ros/ros.h"
 #include "sensor_msgs/JointState.h"
 #include "std_msgs/String.h"
+#include "std_msgs/Float64MultiArray.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <boost/thread.hpp>
@@ -32,6 +33,7 @@ const std::string DESIRED_STATE_TOPIC = "allegroHand/joint_cmd";
 const std::string COMMANDED_JOINT_STATE_TOPIC = "allegroHand/commanded_joint_states";
 const std::string GRAV_COMP_TOPIC = "allegroHand/grav_comp_torques";
 const std::string LIB_CMD_TOPIC = "allegroHand/lib_cmd";
+const std::string GRAV_ROT_TOPIC = "/j2n6s300_driver/end_effector_rotation";
 
 class AllegroNode {
  public:
@@ -78,12 +80,14 @@ class AllegroNode {
   ros::Publisher commanded_joint_state_pub;
   ros::Publisher grav_comp_torques_pub;
   ros::Subscriber joint_cmd_sub;
+  ros::Subscriber grav_rot_sub;
 
   // Store the current and desired joint states.
   sensor_msgs::JointState current_joint_state;
   sensor_msgs::JointState desired_joint_state;
   sensor_msgs::JointState commanded_joint_states;
   sensor_msgs::JointState grav_comp_torques;
+  std_msgs::Float64MultiArray frame_rotation_angles;
  
 
   // ROS Time
