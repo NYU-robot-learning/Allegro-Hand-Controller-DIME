@@ -21,7 +21,8 @@ MAX_ANGLE = 1.7
 MAX_TORQUE = 0.3
 
 # Yaml path for joint pose angles
-YAML_PATH = '/home/grail/catkin_ws/src/Allegro-hand-controller-noetic/src/allegro_hand_parameters/poses.yaml'
+# YAML_PATH = '/home/grail/catkin_ws/src/Allegro-hand-controller-noetic/src/allegro_hand_parameters/hand_poses.yaml'
+YAML_PATH = '/home/grail/dexterous-arm/src/Allegro-hand-controller-noetic/src/allegro_hand_parameters/hand_poses.yaml'
 
 # Path for logging movements
 LOG_PATH = '/home/grail/catkin_ws/src/Allegro-hand-controller-noetic/src/allegro_hand/log' 

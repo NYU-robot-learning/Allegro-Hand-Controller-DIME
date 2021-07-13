@@ -14,9 +14,9 @@ class allegroKDL
   void load_gains(std::vector<double> kp, std::vector<double> kd, std::vector<double> traj_kp, std::vector<double> traj_kd, std::vector<double> traj_ki,std::vector<double> vel_kd, double max_tau, double max_delta,double max_qvel);
   // Dynamic functions:
   // gravity compensation
-  void get_G(std::vector<double> g_vec, const Eigen::VectorXd &q);
-  void get_G(std::vector<double> g_vec, const Eigen::VectorXd &q, Eigen::VectorXd &tau_g);
-  void get_G(std::vector<double> g_vec, const int idx, const Eigen::VectorXd &q, Eigen::VectorXd &tau_g);
+  void get_G(const Eigen::VectorXd &q);
+  void get_G(const Eigen::VectorXd &q, Eigen::VectorXd &tau_g);
+  void get_G(const int idx, const Eigen::VectorXd &q, Eigen::VectorXd &tau_g);
   
   std::vector<double> get_C(int idx,std::vector<double> q,std::vector<double> q_dot);
   std::vector<double> get_tau_ff(std::vector<double> u_pd, std::vector<double> q,std::vector<double> q_dd);
@@ -35,7 +35,6 @@ class allegroKDL
 
   std::vector<double> max_j_limits,min_j_limits;
 
-  void updateG(std::vector<double> g_vec);
   robotKDL* _allegro_kdl;
 
  private:

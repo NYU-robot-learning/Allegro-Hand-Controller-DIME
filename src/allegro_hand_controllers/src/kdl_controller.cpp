@@ -37,9 +37,8 @@ void allegroKDL::load_gains(std::vector<double> kp, std::vector<double> kd, std:
   q_i.resize(16,0.0);
 }
 
-void allegroKDL::get_G(std::vector<double> g_vec, const int idx, const Eigen::VectorXd &q, Eigen::VectorXd &tau_g)
+void allegroKDL::get_G(const int idx, const Eigen::VectorXd &q, Eigen::VectorXd &tau_g)
 {
-  // _allegro_kdl->update_g_vec(&g_vec);
   // send only joints of idx finger:
   _q_finger.resize(4);
   for (int i =0;i<4;i++)
@@ -49,9 +48,8 @@ void allegroKDL::get_G(std::vector<double> g_vec, const int idx, const Eigen::Ve
   _allegro_kdl->getGtau(idx, q, tau_g);
 }
 
-void allegroKDL::get_G(std::vector<double> g_vec, const Eigen::VectorXd &q, Eigen::VectorXd &tau_g)
+void allegroKDL::get_G(const Eigen::VectorXd &q, Eigen::VectorXd &tau_g)
 {
-  // _allegro_kdl->update_g_vec(g_vec);
   tau_g.resize(16);
   // send only joints of idx finger:
   for (int j=0;j<4;j++)
@@ -71,9 +69,9 @@ void allegroKDL::get_G(std::vector<double> g_vec, const Eigen::VectorXd &q, Eige
   tau_g[12]=1.01*tau_g[12];
 }
 
-void allegroKDL::get_G(std::vector<double> g_vec, const Eigen::VectorXd &q)
+void allegroKDL::get_G(const Eigen::VectorXd &q)
 {
-   allegroKDL::get_G(g_vec, q, _tau_g);
+   allegroKDL::get_G(q, _tau_g);
 }
 
 std::vector<double> allegroKDL::get_C(int idx,std::vector<double> q,std::vector<double> q_dot)
@@ -119,10 +117,6 @@ void allegroKDL::get_PD(const Eigen::VectorXd &q_des,const Eigen::VectorXd &q, c
   {
     delta_q=q_des[i]-q[i];
 
-    // if (i == Joint) {
-    //   ROS_INFO("Before clamping: delta_q[Joint]: %f ; error[Joint]: %f; k_d error[Joint]: %f;", delta_q, K_p[Joint]*(delta_q), K_d[Joint]*q_dot[Joint]);
-    // }
-
     if(delta_q>max_delta_q)
     {
       delta_q=max_delta_q;
@@ -139,11 +133,6 @@ void allegroKDL::get_PD(const Eigen::VectorXd &q_des,const Eigen::VectorXd &q, c
     {
       tau_PD[i]=std::copysign(max_tau_des, tau_PD[i]);
     }
-
-    // if (i == Joint) {
-    //   ROS_INFO("After clamping: delta_q[Joint]: %f ; error[Joint]: %f; k_d error[Joint]: %f;", delta_q, K_p[Joint]*(delta_q), K_d[Joint]*q_dot[Joint]);
-    //   ROS_INFO("TAU_PD[Joint]: %f\n", tau_PD[i]);
-    // }
   }
 }
 
@@ -252,11 +241,6 @@ void allegroKDL::get_vel_PD(const Eigen::VectorXd &q_dot_des, const Eigen::Vecto
       tau_PD[i]=std::copysign(max_tau_des, tau_PD[i]);
     }
   }
-}
-
-void allegroKDL::updateG(std::vector<double> g_vec){
-  _allegro_kdl->update_g_vec(g_vec);
-  _allegro_kdl->update_solvers();
 }
 
 allegroKDL::~allegroKDL () {

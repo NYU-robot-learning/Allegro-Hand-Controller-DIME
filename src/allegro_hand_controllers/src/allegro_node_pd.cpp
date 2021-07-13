@@ -306,7 +306,7 @@ void AllegroNodePD::computeDesiredTorque() {
   // g_vec[1] = (double)frame_rotation_angles.data[1];
   // g_vec[2] = (double)frame_rotation_angles.data[2];
 
-  kdl_comp.get_G(g_vec, current_position_eigen, tau_g);
+  kdl_comp.get_G(current_position_eigen, tau_g);
   kdl_comp.get_PD(desired_position_eigen, current_position_eigen, current_velocity_eigen, tau_pos);
 
   // No control: set torques to zero.
