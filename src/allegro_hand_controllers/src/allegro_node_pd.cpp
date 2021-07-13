@@ -79,9 +79,10 @@ double loop_rate = 300.0;
 
 // TODO: Convert this to a ROS subscriber when robot is attached.\
 // Upright position
+// std::vector<double> g_vec={-9.154866, -1.938582, 2.910382};
 std::vector<double> g_vec={0.0, 0.0, -9.8};
 // std::vector<double> g_vec={0.0, -9.8, 0.0};
-// std::vector<double> g_vec={-9.8, 0.0, 0.0};
+// std::vector<double> g_vec={9.8, 0.0, 0.0};
 
 // Rosparam names
 // K_p values
@@ -191,7 +192,7 @@ std::string gravityVector[3] = {
         "~shared/parameters/g_vector/z"
 };
 
-allegroKDL kdl_comp(g_vec,loop_rate);
+
 
 // Constructor subscribes to topics.
 AllegroNodePD::AllegroNodePD()
@@ -221,8 +222,6 @@ AllegroNodePD::AllegroNodePD()
     
   commanded_joint_state_pub = nh.advertise<sensor_msgs::JointState>(COMMANDED_JOINT_STATE_TOPIC, 3);
   grav_comp_torques_pub = nh.advertise<sensor_msgs::JointState>(GRAV_COMP_TOPIC, 3);
-
-  kdl_comp.load_gains(K_p,K_d,traj_K_p,traj_K_d,traj_K_i,vel_K_d,max_tau_des,max_delta_q,max_q_vel);
 
 }
 
@@ -269,8 +268,14 @@ void AllegroNodePD::setJointCallback(const sensor_msgs::JointState &msg) {
 }
 
 void AllegroNodePD::rotationAnglesCallback(const std_msgs::Float64MultiArray &msg) {
-  frame_rotation_angles = msg;
-  // ROS_INFO("Frame rotation values: [%f %f %f %f]", frame_rotation_angles.data[0], frame_rotation_angles.data[1], frame_rotation_angles.data[2], frame_rotation_angles.data[3]);
+  g_vec[0] = msg.data[0];
+  g_vec[1] = msg.data[1];
+  g_vec[2] = msg.data[2];
+  // g_vec[0] = 9.8;
+  // g_vec[1] = 0;
+  // g_vec[2] = 0;
+  // frame_rotation_angles = msg;
+  // ROS_INFO("Frame rotation values: [%f %f %f]", frame_rotation_angles.data[0], frame_rotation_angles.data[1], frame_rotation_angles.data[2]);
 
 }
 
@@ -278,6 +283,12 @@ void AllegroNodePD::computeDesiredTorque() {
   // NOTE: here we just compute and set the desired_torque class member
   // variable.
 
+
+
+  // ROS_INFO("Gravity vector : [%f %f %f]", g_vec[0], g_vec[1], g_vec[2]);
+  
+  allegroKDL kdl_comp(g_vec,loop_rate);
+  kdl_comp.load_gains(K_p,K_d,traj_K_p,traj_K_d,traj_K_i,vel_K_d,max_tau_des,max_delta_q,max_q_vel);
 
   for (int iterator=0; iterator < DOF_JOINTS; iterator++) {
     current_position_eigen[iterator] = current_position_filtered[iterator];
@@ -291,7 +302,11 @@ void AllegroNodePD::computeDesiredTorque() {
     current_velocity_eigen[iterator] = current_velocity_filtered[iterator];
   }
 
-  kdl_comp.get_G(current_position_eigen, tau_g);
+  // g_vec[0] = (double)frame_rotation_angles.data[0];
+  // g_vec[1] = (double)frame_rotation_angles.data[1];
+  // g_vec[2] = (double)frame_rotation_angles.data[2];
+
+  kdl_comp.get_G(g_vec, current_position_eigen, tau_g);
   kdl_comp.get_PD(desired_position_eigen, current_position_eigen, current_velocity_eigen, tau_pos);
 
   // No control: set torques to zero.
@@ -322,7 +337,7 @@ void AllegroNodePD::computeDesiredTorque() {
       for (int i = 0; i < DOF_JOINTS; i++) {
         
         desired_torque[i] = tau_g[i];
-        desired_torque[i] += tau_pos[i];   
+        // desired_torque[i] += tau_pos[i];   
 
         // Clamping max torques.
         if (desired_torque[i] > max_tau_des) desired_torque[i] = max_tau_des;

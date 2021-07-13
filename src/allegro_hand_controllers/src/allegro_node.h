@@ -33,7 +33,7 @@ const std::string DESIRED_STATE_TOPIC = "allegroHand/joint_cmd";
 const std::string COMMANDED_JOINT_STATE_TOPIC = "allegroHand/commanded_joint_states";
 const std::string GRAV_COMP_TOPIC = "allegroHand/grav_comp_torques";
 const std::string LIB_CMD_TOPIC = "allegroHand/lib_cmd";
-const std::string GRAV_ROT_TOPIC = "/j2n6s300_driver/end_effector_rotation";
+const std::string GRAV_ROT_TOPIC = "/j2n6s300_driver/hand_gravity_vector";
 
 class AllegroNode {
  public:
