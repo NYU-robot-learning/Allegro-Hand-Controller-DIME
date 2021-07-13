@@ -15,7 +15,7 @@ allegroKDL::allegroKDL(std::vector<double> g_vec, double control_rate)
   loop_rate=control_rate;
 
   // build kdl tree and chains:
-  _allegro_kdl=new robotKDL(_urdf_file,_base_names,_ee_names,_g_vec);
+  _allegro_kdl = new robotKDL(_urdf_file,_base_names,_ee_names,_g_vec);
   _allegro_kdl->getJointLimits(0, max_j_limits, min_j_limits);
   _allegro_kdl->getJointLimits(1, max_j_limits, min_j_limits);
   _allegro_kdl->getJointLimits(2, max_j_limits, min_j_limits);
@@ -37,8 +37,9 @@ void allegroKDL::load_gains(std::vector<double> kp, std::vector<double> kd, std:
   q_i.resize(16,0.0);
 }
 
-void allegroKDL::get_G(const int idx, const Eigen::VectorXd &q, Eigen::VectorXd &tau_g)
+void allegroKDL::get_G(std::vector<double> g_vec, const int idx, const Eigen::VectorXd &q, Eigen::VectorXd &tau_g)
 {
+  // _allegro_kdl->update_g_vec(&g_vec);
   // send only joints of idx finger:
   _q_finger.resize(4);
   for (int i =0;i<4;i++)
@@ -48,8 +49,9 @@ void allegroKDL::get_G(const int idx, const Eigen::VectorXd &q, Eigen::VectorXd 
   _allegro_kdl->getGtau(idx, q, tau_g);
 }
 
-void allegroKDL::get_G(const Eigen::VectorXd &q, Eigen::VectorXd &tau_g)
+void allegroKDL::get_G(std::vector<double> g_vec, const Eigen::VectorXd &q, Eigen::VectorXd &tau_g)
 {
+  // _allegro_kdl->update_g_vec(g_vec);
   tau_g.resize(16);
   // send only joints of idx finger:
   for (int j=0;j<4;j++)
@@ -69,9 +71,9 @@ void allegroKDL::get_G(const Eigen::VectorXd &q, Eigen::VectorXd &tau_g)
   tau_g[12]=1.01*tau_g[12];
 }
 
-void allegroKDL::get_G(const Eigen::VectorXd &q)
+void allegroKDL::get_G(std::vector<double> g_vec, const Eigen::VectorXd &q)
 {
-   allegroKDL::get_G(q, _tau_g);
+   allegroKDL::get_G(g_vec, q, _tau_g);
 }
 
 std::vector<double> allegroKDL::get_C(int idx,std::vector<double> q,std::vector<double> q_dot)
@@ -250,4 +252,13 @@ void allegroKDL::get_vel_PD(const Eigen::VectorXd &q_dot_des, const Eigen::Vecto
       tau_PD[i]=std::copysign(max_tau_des, tau_PD[i]);
     }
   }
+}
+
+void allegroKDL::updateG(std::vector<double> g_vec){
+  _allegro_kdl->update_g_vec(g_vec);
+  _allegro_kdl->update_solvers();
+}
+
+allegroKDL::~allegroKDL () {
+  delete _allegro_kdl;
 }
