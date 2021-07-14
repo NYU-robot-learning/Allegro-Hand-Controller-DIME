@@ -10,6 +10,7 @@ class allegroKDL
 {
  public:
   allegroKDL(std::vector<double> g_vec, double control_rate);// constructor- builds kdl chain
+  ~allegroKDL();
   void load_gains(std::vector<double> kp, std::vector<double> kd, std::vector<double> traj_kp, std::vector<double> traj_kd, std::vector<double> traj_ki,std::vector<double> vel_kd, double max_tau, double max_delta,double max_qvel);
   // Dynamic functions:
   // gravity compensation
@@ -34,13 +35,14 @@ class allegroKDL
 
   std::vector<double> max_j_limits,min_j_limits;
 
+  robotKDL* _allegro_kdl;
+
  private:
   std::vector<double> _g_vec;//={0.0,0.0,-9.8};
   std::string _urdf_file;// = ros::package::getPath("ll4ma_robots_description");
   
   std::vector<std::string> _ee_names;//={"palm_link","index_tip","middle_tip","ring_tip","thumb_tip"};
   std::vector<std::string> _base_names;//={"base_link","base_link","base_link","base_link","base_link"};
-  robotKDL* _allegro_kdl;
   Eigen::VectorXd _q_finger;
   Eigen::VectorXd _tau_g_finger;
   Eigen::VectorXd _tau_g;

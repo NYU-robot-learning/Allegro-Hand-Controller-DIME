@@ -15,7 +15,7 @@ allegroKDL::allegroKDL(std::vector<double> g_vec, double control_rate)
   loop_rate=control_rate;
 
   // build kdl tree and chains:
-  _allegro_kdl=new robotKDL(_urdf_file,_base_names,_ee_names,_g_vec);
+  _allegro_kdl = new robotKDL(_urdf_file,_base_names,_ee_names,_g_vec);
   _allegro_kdl->getJointLimits(0, max_j_limits, min_j_limits);
   _allegro_kdl->getJointLimits(1, max_j_limits, min_j_limits);
   _allegro_kdl->getJointLimits(2, max_j_limits, min_j_limits);
@@ -117,10 +117,6 @@ void allegroKDL::get_PD(const Eigen::VectorXd &q_des,const Eigen::VectorXd &q, c
   {
     delta_q=q_des[i]-q[i];
 
-    // if (i == Joint) {
-    //   ROS_INFO("Before clamping: delta_q[Joint]: %f ; error[Joint]: %f; k_d error[Joint]: %f;", delta_q, K_p[Joint]*(delta_q), K_d[Joint]*q_dot[Joint]);
-    // }
-
     if(delta_q>max_delta_q)
     {
       delta_q=max_delta_q;
@@ -137,11 +133,6 @@ void allegroKDL::get_PD(const Eigen::VectorXd &q_des,const Eigen::VectorXd &q, c
     {
       tau_PD[i]=std::copysign(max_tau_des, tau_PD[i]);
     }
-
-    // if (i == Joint) {
-    //   ROS_INFO("After clamping: delta_q[Joint]: %f ; error[Joint]: %f; k_d error[Joint]: %f;", delta_q, K_p[Joint]*(delta_q), K_d[Joint]*q_dot[Joint]);
-    //   ROS_INFO("TAU_PD[Joint]: %f\n", tau_PD[i]);
-    // }
   }
 }
 
@@ -250,4 +241,8 @@ void allegroKDL::get_vel_PD(const Eigen::VectorXd &q_dot_des, const Eigen::Vecto
       tau_PD[i]=std::copysign(max_tau_des, tau_PD[i]);
     }
   }
+}
+
+allegroKDL::~allegroKDL () {
+  delete _allegro_kdl;
 }
