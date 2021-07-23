@@ -14,6 +14,9 @@ import csv
 SUB_TOPIC_NAME_1 = '/allegroHand_0/joint_states'
 SUB_TOPIC_NAME_2 = '/allegroHand/grav_comp_torques'
 SUB_TOPIC_NAME_3 = '/allegroHand/commanded_joint_states'
+
+
+# List of all the publishers
 PUB_TOPIC_NAME = '/allegroHand_0/joint_cmd'
 
 # Max values
@@ -22,7 +25,8 @@ MAX_TORQUE = 0.3
 
 # Yaml path for joint pose angles
 # YAML_PATH = '/home/grail/catkin_ws/src/Allegro-hand-controller-noetic/src/allegro_hand_parameters/hand_poses.yaml'
-YAML_PATH = '/home/grail/dexterous-arm/src/Allegro-hand-controller-noetic/src/allegro_hand_parameters/hand_poses.yaml'
+# YAML_PATH = '/home/grail/dexterous-arm/src/Allegro-hand-controller-noetic/src/allegro_hand_parameters/hand_poses.yaml'
+YAML_PATH = '/home/grail/dexterous-arm/src/Allegro-hand-controller-noetic/src/allegro_hand_parameters/complete_hand_pose.yaml'
 
 # Path for logging movements
 LOG_PATH = '/home/grail/catkin_ws/src/Allegro-hand-controller-noetic/src/allegro_hand/log' 
@@ -53,6 +57,7 @@ class AllegroEnv(object):
         rospy.Subscriber(SUB_TOPIC_NAME_1, JointState, self._sub_callback_joint_state)
         rospy.Subscriber(SUB_TOPIC_NAME_2, JointState, self._sub_callback_grav_comp)
         rospy.Subscriber(SUB_TOPIC_NAME_3, JointState, self._sub_callback_cmd__joint_state)
+        
 
         self.pub = rospy.Publisher(PUB_TOPIC_NAME, JointState, queue_size=-1)
 
@@ -109,7 +114,7 @@ class AllegroEnv(object):
         desired_js = copy(self.current_joint_pose)
         desired_js.position = list(desired_angles)
         desired_js.effort = list([])
-        self.pub.publish(desired_js)
+        self.pub.publish(desired_js)        
 
     def poses(self):
         actions = []

@@ -337,7 +337,7 @@ void AllegroNodePD::computeDesiredTorque() {
       for (int i = 0; i < DOF_JOINTS; i++) {
         
         desired_torque[i] = tau_g[i];
-        // desired_torque[i] += tau_pos[i];   
+        desired_torque[i] += tau_pos[i];   
 
         // Clamping max torques.
         if (desired_torque[i] > max_tau_des) desired_torque[i] = max_tau_des;
