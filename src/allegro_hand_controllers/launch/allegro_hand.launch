@@ -31,6 +31,7 @@
   <arg name="HAND" default="right"/>
   <arg name="NUM" default="0"/>
   <arg name="GAZEBO" default="false"/>
+  <arg name="LOG" default="false"/>
 
   <!-- Use the joint_state_publisher for *commanded* joint angles. -->
   <arg name="JSP_GUI" default="false"/>
@@ -38,9 +39,8 @@
   <!-- Visualization with rviz, only if arg VISUALIZE is set to true. Default is
        false, the allegro_viz.launch can be started separated. -->
   <arg name ="VISUALIZE" default="true" />
-  <include file="$(find allegro_hand_controllers)/launch/allegro_viz.launch"
+  <include file="$(find allegro_hand_controllers)/launch/visualizer.launch"
            if="$(arg VISUALIZE)">
-    <arg name="NUM" value="$(arg NUM)"/>
   </include>
 
   <arg name="CONTROLLER" default="pd"/> <!-- grasp, pd, velsat  -->
@@ -69,17 +69,12 @@
 
   <!-- Load the robot description directly from the xacro file. (NOTE: store it
        in two parameter names.) -->
-  <!-- <param name="robot_description"
-          command="cat $(find allegro_hand_description)/allegro_hand_description_$(arg HAND).urdf"/> -->
-
   <param name="robot_description"
          command="$(find xacro)/xacro
                   $(find allegro_hand_description)/allegro_hand_description_$(arg HAND).xacro"/>
 
-  
-
   <!-- Allegro Hand controller and communication node. -->
-  <node name="allegroHand_$(arg HAND)_$(arg NUM)"
+  <node name="allegroHand_$(arg HAND)"
         pkg="allegro_hand_controllers"
         type="allegro_node_$(arg CONTROLLER)"
         output="screen"
@@ -88,21 +83,12 @@
         respawn_delay="2"
         args="$(arg POLLING)" >
 
-    <!-- Remapping of topics into enumerated allegroHand_# namespace -->
-    <remap from="allegroHand/joint_states" to="allegroHand_$(arg NUM)/joint_states"/>
-    <remap from="allegroHand/joint_cmd" to="allegroHand_$(arg NUM)/joint_cmd"/>
-    <remap from="allegroHand/lib_cmd" to="allegroHand_$(arg NUM)/lib_cmd"/>
-    <remap from="allegroHand/torque_cmd" to="allegroHand_$(arg NUM)/torque_cmd"/>
-    <remap from="allegroHand/envelop_torque" to="allegroHand_$(arg NUM)/envelop_torque"/>
-    <remap from="allegroHand/joint_current_states" to="allegroHand_$(arg NUM)/joint_current_states"/>
-    <remap from="allegroHand/joint_desired_states" to="allegroHand_$(arg NUM)/joint_desired_states"/>
-    
-
     <!--parameters are within the scope of the hand node so that multiple hands can be run at the same time -->
     <rosparam file="$(arg ZEROS)" command="load" />
 
     <rosparam file="$(arg PARAMS_DIR)/gains_pd.yaml" command="load" />
-    <rosparam file="$(arg PARAMS_DIR)/gains_velSat.yaml" command="load" />
+    <!-- <rosparam file="$(arg PARAMS_DIR)/gains_velSat.yaml" command="load" /> -->
+    <rosparam file="$(arg PARAMS_DIR)/shared.yaml" command="load" />
     <rosparam file="$(arg PARAMS_DIR)/initial_position.yaml" command="load" />
 
     <!-- Set the CAN channel automatically (using detect_pcan.py) if the
@@ -120,46 +106,30 @@
 
   <!-- NOTE: The joint_state_publisher is actually commanding *desired* joint
        angles. You can use the 'sim' controller to have a non-existent hand. -->
-  <node name="joint_states_$(arg NUM)" pkg="joint_state_publisher" type="joint_state_publisher"
+  <node name="joint_states" pkg="joint_state_publisher" type="joint_state_publisher"
         if="$(arg JSP_GUI)">
-    <remap from="joint_states" to="allegroHand_$(arg NUM)/joint_cmd"/>
+    <remap from="joint_states" to="allegroHand/joint_cmd"/>
     <param name="use_gui" value="true"/>
   </node>
 
   <!-- Joint States (angles) to Joint Transforms -->
-  <node name="jointState2tf_$(arg NUM)"
+  <node name="jointState2tf"
         pkg="robot_state_publisher"
-        output="screen" 
         type="robot_state_publisher">
-    <remap from="tf" to="allegroHand_$(arg NUM)/tf"/>
-    <remap from="joint_states" to="allegroHand_$(arg NUM)/joint_states"/>
+    <remap from="tf" to="allegroHand/tf"/>
+    <remap from="joint_states" to="allegroHand/joint_states"/>
   </node>
 
-
-
   <!-- Keyboard handler (if arg KEYBOARD is true) -->
-  <node name="keyboard_$(arg NUM)"
+  <node name="keyboard"
         pkg="allegro_hand_keyboard"
         type="allegro_hand_keyboard"
         output="screen"
         if="$(arg KEYBOARD)">
-    <remap from="allegroHand/lib_cmd" to="allegroHand_$(arg NUM)/lib_cmd"/>
+    <remap from="allegroHand/lib_cmd" to="allegroHand/lib_cmd"/>
   </node>
 
-
-  <!-- Gazebo support is very experimental at the moment. -->
-
-  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
-  <include file="$(find gazebo_ros)/launch/empty_world.launch"
-           if="$(arg GAZEBO)">
-    <arg name="world_name" value="$(find allegro_hand_description)/worlds/allegro.world"/>
-    <arg name="debug" value="false" />
-    <arg name="paused" value="true"/>
-  </include>
-
-  <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
-  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
-	args="-urdf -model rrbot -param robot_description"
-        if="$(arg GAZEBO)" /> 
+      <!-- Logger node -->
+  <node pkg="allegro_hand" type="logger.py" name="logger" if="$(arg LOG)"/>
 
 </launch>

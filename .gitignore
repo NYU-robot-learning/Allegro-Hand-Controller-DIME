@@ -44,3 +44,4 @@
 # Log files
 /src/allegro_hand/log/*
 
+src/.vscode/*

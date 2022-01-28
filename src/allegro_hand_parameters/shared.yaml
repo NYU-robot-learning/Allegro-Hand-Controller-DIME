@@ -1,5 +1,5 @@
 parameters:
-  loop_rate: 300
+  loop_rate: 300.0
 
   g_vector:
     x: 0

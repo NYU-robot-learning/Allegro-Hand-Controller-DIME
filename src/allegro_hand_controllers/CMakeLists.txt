@@ -8,7 +8,7 @@ set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   allegro_hand_driver
-  bhand
+#  bhand
   libpcan
   roscpp
   sensor_msgs
@@ -24,7 +24,7 @@ find_package(Eigen REQUIRED)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES allegro_hand_controllers
-  CATKIN_DEPENDS allegro_hand_driver bhand libpcan roscpp sensor_msgs ll4ma_kdl
+  CATKIN_DEPENDS allegro_hand_driver libpcan roscpp sensor_msgs ll4ma_kdl # bhand
   DEPENDS Eigen
 )
 #add_library(allegro_node src/kdl_controller.cpp)
@@ -41,9 +41,6 @@ include_directories(
 add_library(allegro_node src/allegro_node.cpp src/kdl_controller.cpp)
 
 ## Declare executables
-add_executable(allegro_node_grasp src/allegro_node_grasp.cpp)
-target_link_libraries(allegro_node_grasp allegro_node ${catkin_LIBRARIES})
-
 add_executable(allegro_node_pd src/allegro_node_pd.cpp)
 target_link_libraries(allegro_node_pd allegro_node ${catkin_LIBRARIES})
 
@@ -56,7 +53,6 @@ target_link_libraries(allegro_node_pd allegro_node ${catkin_LIBRARIES})
 
 install(TARGETS
   allegro_node
-  allegro_node_grasp
   allegro_node_pd
   #kdl_controller
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

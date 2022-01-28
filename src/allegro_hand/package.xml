@@ -12,7 +12,7 @@
     <buildtool_depend>catkin</buildtool_depend>
 
     <build_depend>allegro_hand_driver</build_depend>
-    <build_depend>bhand</build_depend>
+    <!-- <build_depend>bhand</build_depend> -->
     <build_depend>libpcan</build_depend>
     <build_depend>roscpp</build_depend>
     <build_depend>sensor_msgs</build_depend>
@@ -20,7 +20,7 @@
     <run_depend>allegro_hand_description</run_depend>
     <run_depend>allegro_hand_driver</run_depend>
     <run_depend>allegro_hand_parameters</run_depend>
-    <run_depend>bhand</run_depend>
+    <!-- <run_depend>bhand</run_depend> -->
     <run_depend>joint_state_publisher</run_depend>
     <run_depend>libpcan</run_depend>
     <run_depend>robot_state_publisher</run_depend>

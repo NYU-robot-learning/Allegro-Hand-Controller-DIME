@@ -10,11 +10,11 @@ set(ll4ma_kdl_DIR "/home/grail/catkin_ws/src/allegro_hand_ros_v4/src/ll4ma_kdl/"
 
 find_package(catkin REQUIRED COMPONENTS
   allegro_hand_driver
-  bhand
   libpcan
   roscpp
   sensor_msgs
   ll4ma_kdl
+#  bhand
 # roslaunch  # Disabled due to testing
 )
 
@@ -24,7 +24,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES allegro_hand_controllers
-  CATKIN_DEPENDS allegro_hand_driver bhand libpcan roscpp sensor_msgs # ll4ma_kdl
+  CATKIN_DEPENDS allegro_hand_driver libpcan roscpp sensor_msgs # ll4ma_kdl bhand 
 #  DEPENDS
 )
 

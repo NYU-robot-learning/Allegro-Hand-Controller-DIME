@@ -3,7 +3,9 @@
 
 #include "allegro_node.h"
 
-#include "std_msgs/Float64MultiArray.h"
+#include "std_msgs/Float64MultiArray.h"ß
+
+#include "kdl_controller.h"
 
 
 // Joint-space PD control of the Allegro hand.
@@ -27,7 +29,7 @@ class AllegroNodePD : public AllegroNode {
 
   void setJointCallback(const sensor_msgs::JointState &msg);
 
-  void rotationAnglesCallback(const std_msgs::Float64MultiArray &desired);
+  void handGravityVectorCallback(const std_msgs::Float64MultiArray &desired);
 
   // Loads all gains and initial positions from the parameter server.
   void initController(const std::string &whichHand);
@@ -35,7 +37,8 @@ class AllegroNodePD : public AllegroNode {
   // PD control happens here.
   void computeDesiredTorque();
 
- protected:
+  allegroKDL* kdl_comp;
+
   // Handles defined grasp commands (std_msgs/String).
   ros::Subscriber lib_cmd_sub;
 
@@ -46,6 +49,7 @@ class AllegroNodePD : public AllegroNode {
   // If this flag is true, the hand will be controlled (either in joint position
   // or joint torques). If false, desired torques will all be zero.
   bool control_hand_ = false;
+  bool gravity_comp_ = false;
 };
 
 #endif  // __ALLEGRO_NODE_PD_H__

@@ -97,7 +97,6 @@ void AllegroNode::publishData() {
 }
 
 void AllegroNode::updateController() {
-
   // Calculate loop time;
   tnow = ros::Time::now();
       
@@ -111,7 +110,6 @@ void AllegroNode::updateController() {
   }
 
   tstart = tnow;
-
 
   if (canDevice)
   {
