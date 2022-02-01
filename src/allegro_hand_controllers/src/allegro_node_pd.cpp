@@ -13,7 +13,7 @@ using namespace std;
 
 // Default parameters (if rosparams are not correctly set)
 double home_pose[DOF_JOINTS];
-Eigen::VectorXd tau_g;
+Eigen::VectorXd tau_g = Eigen::VectorXd::Zero(DOF_JOINTS);
 
 Eigen::VectorXd current_position_eigen((int)DOF_JOINTS);
 Eigen::VectorXd desired_position_eigen((int)DOF_JOINTS);
@@ -31,7 +31,7 @@ double max_tau_des = 0.65;
 double loop_rate = 300.0;
 
 // TODO: Convert this to a ROS subscriber when robot is attached.
-std::vector<double> g_vec = {-9.8, 0, 0};
+std::vector<double> g_vec = {0, 0, 0};
 
 // Rosparam names
 // K_p values
@@ -165,6 +165,10 @@ void AllegroNodePD::computeDesiredTorque() {
 
   // Obtaining the gravity compensation torques using the dynamic gravity vector
   kdl_comp->update_G(g_vec);
+
+  // ROS_INFO("Updated gravity vector inner: %f, %f, %f", kdl_comp->_allegro_kdl->g_vec_[0], kdl_comp->_allegro_kdl->g_vec_[1], kdl_comp->_allegro_kdl->g_vec_[2]);
+  // ROS_INFO("Updated gravity vector outer: %f, %f, %f", kdl_comp->_g_vec[0], kdl_comp->_g_vec[1], kdl_comp->_g_vec[2]);
+
   kdl_comp->get_G(current_position_eigen, tau_g);
 
   // No control: set torques to zero.
@@ -202,8 +206,8 @@ void AllegroNodePD::computeDesiredTorque() {
           desired_torque[i] = tau_g[i];
         } else {
           desired_torque[i] = tau_g[i] + tau_pos[i];
-        }
 
+        }
         // Clamping max torques.
         if (desired_torque[i] > max_tau_des) desired_torque[i] = max_tau_des;
         else if (desired_torque[i] < -max_tau_des) desired_torque[i] = -max_tau_des;
@@ -231,8 +235,6 @@ void AllegroNodePD::computeDesiredTorque() {
         // commanded_joint_states.name[i] = desired_joint_state.name[i];
         grav_comp_torques.effort[i] = tau_g[i];
     }
-
-    ROS_INFO("Applied gravity comp torque: %f", desired_torque[1]);
 
     // Torque publishers
     grav_comp_torques_pub.publish(grav_comp_torques);

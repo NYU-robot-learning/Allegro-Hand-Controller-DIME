@@ -56,12 +56,12 @@ class AllegroController(object):
     def _sub_callback_cmd__joint_state(self, data):
         self.cmd_joint_state = data
       
-    def hand_pose(self, desired_action = np.zeros(16), absolute = False):
+    def hand_pose(self, desired_action = np.zeros(16), absolute = True):
         if self.current_joint_pose == DEFAULT_VAL:
             print('No joint data received!')
             return
 
-        action = self._norm(action, MAX_ANGLE)
+        action = self._clip(desired_action, MAX_ANGLE)
         current_angles = self.current_joint_pose.position
 
         if absolute is True:
@@ -73,7 +73,6 @@ class AllegroController(object):
         desired_js.position = list(desired_angles)
         desired_js.effort = list([])
 
-        print('Moving to Desired Joint Position:', desired_js.position)
         self.joint_comm_publisher.publish(desired_js)
 
     def apply_joint_torque(self, action=np.zeros(16)):
@@ -81,7 +80,7 @@ class AllegroController(object):
             print('No joint data received!')
             return
 
-        action = self._norm(action, MAX_TORQUE)
+        action = self._clip(action, MAX_TORQUE)
         desired_torques = np.array(action)
 
         desired_js = copy(self.current_joint_pose)
@@ -90,7 +89,7 @@ class AllegroController(object):
         print('Applying the Desired Joint Torques:', desired_js.effort)
         self.joint_comm_publisher.publish(desired_js)
 
-    def _norm(self, action, value):
+    def _clip(self, action, value):
         return np.clip(action, -value, value)
 
     def log_current_pose(self, log_file):

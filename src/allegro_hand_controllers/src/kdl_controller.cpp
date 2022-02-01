@@ -43,7 +43,7 @@ void allegroKDL::get_G(const int idx, const Eigen::VectorXd &q, Eigen::VectorXd 
 
 void allegroKDL::get_G(const Eigen::VectorXd &q, Eigen::VectorXd &tau_g) {
   tau_g.resize(16);
-  
+
   // send only joints of idx finger:
   for (int j = 0; j < 4; j++) {
     _q_finger.resize(4);
@@ -58,6 +58,8 @@ void allegroKDL::get_G(const Eigen::VectorXd &q, Eigen::VectorXd &tau_g) {
 	    tau_g[j * 4 + i] = _tau_g_finger[i];
 	  }
   }
+
+  // ROS_INFO("Computed gravity torque: %f", tau_g[1]);
 
   // increasing thumb first joint:
   tau_g[12] = 1.01 * tau_g[12];
@@ -90,7 +92,7 @@ void allegroKDL::get_PD(const Eigen::VectorXd &q_des, const Eigen::VectorXd &q, 
 
 void allegroKDL::update_G(std::vector<double> g_vec) {
   _g_vec = g_vec;
-  _allegro_kdl->update_g_vec(g_vec);
+  _allegro_kdl->update_g_vec(_g_vec);
 }
 
 // Destructor

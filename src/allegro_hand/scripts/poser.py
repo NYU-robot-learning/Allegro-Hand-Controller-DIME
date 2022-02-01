@@ -8,7 +8,7 @@ from allegro_hand.controller import AllegroController
 # Yaml path for joint pose angles
 YAML_PATH = '/home/sridhar/dexterous_arm/arm_stuff/src/Allegro-hand-controller-noetic/src/allegro_hand_parameters/poses.yaml'
 
-def perform_poses(self, yaml_file):
+def perform_poses(yaml_file):
     # Initializing the controller
     allegro_controller = AllegroController()
 

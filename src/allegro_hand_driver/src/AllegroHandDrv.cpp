@@ -197,6 +197,7 @@ void AllegroHandDrv::setTorque(double *torque)
             _desired_torque[4*findex+2] = torque[4*findex+2];
             _desired_torque[4*findex+3] = torque[4*findex+3];
         }
+    
     }
     else {
         ROS_ERROR("CAN: Can not determine proper finger CAN channels. Check the Allegro Hand version number in 'zero.yaml'");
