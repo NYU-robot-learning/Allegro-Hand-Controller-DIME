@@ -7,26 +7,26 @@ gains_pd:
  p:
 #  Index finger
   j00: 1.0
-  j01: 1.6 
+  j01: 1.7
   j02: 1.5
   j03: 1.2
 
 #  Middle finger
   j10: 1.0
-  j11: 1.6
+  j11: 1.7
   j12: 1.5
   j13: 1.2
 
 #  Ring finger
   j20: 1.0
-  j21: 1.6
+  j21: 1.7
   j22: 1.5
   j23: 1.2
 
 #  Thumb finger
-  j30: 2.0
+  j30: 2.1
   j31: 1.4
-  j32: 1.6
+  j32: 1.65
   j33: 1.2
 
 #derivative
@@ -55,9 +55,5 @@ gains_pd:
   j32: 0.12
   j33: 0.11
 
-# Other parameters
- max_q_vel: 0.01
- max_delta_q: 0.15
- max_tau_des: 0.65
 
  
