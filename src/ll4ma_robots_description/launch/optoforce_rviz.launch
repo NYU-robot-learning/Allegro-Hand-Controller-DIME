@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="end_effector" default="biotac_mount" doc="[allegro, reflex, push_stick] End-effector."        />
+  <arg name="jsp_gui"   default="false" doc="[true, false] Control joint angles with GUI if true." />
+  <arg name="gazebo"    default="false" doc="[true, false] Include Gazebo components if true."     />
+  <!-- ========================================================================================== -->
+  
+  <node pkg="rviz" type="rviz" output="screen" name="rviz"
+    args="-d $(find ll4ma_robots_description)/config/robot.rviz"/>
+
+  <param name="robot_description" command="
+        $(find xacro)/xacro '$(find ll4ma_robots_description)/robots/optoforce.robot.xacro'
+	end_effector:=$(arg end_effector)
+	gazebo:=$(arg gazebo)
+        --inorder"/>
+        
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+  
+  <node pkg="joint_state_publisher" type="joint_state_publisher" output="screen"
+        name="joint_state_publisher">
+    <param name="use_gui" value="$(arg jsp_gui)"/>
+    <param name="publish_default_velocities" value="true"/>
+    <param name="publish_default_efforts" value="true"/>
+    <param name="rate" value="100"/>
+  </node>
+
+</launch>

@@ -1,0 +1,3 @@
+<launch>
+<node name="lbr4_trac_ik" pkg="urlg_robots_ik_solvers" type="lbr4_trac_ik" output="screen"/>
+</launch>

@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="end_effector"   default="allegro"  doc="[allegro, reflex, push_stick]"          />
+  <arg name="ft_sensor"      default="true" doc="Use Optoforce FT Sensor if true."       />
+  <arg name="jsp_gui"        default="true"  doc="Control joint angles with GUI if true." />
+  <arg name="omni"           default="false" doc="Control robot pose with Omni if true."  />
+  <arg name="table"          default="false" doc="Mount robot on table if true."          />
+  <arg name="gazebo"         default="false" doc="Include Gazebo components if true."     />
+  <arg name="biotac"         default="true" doc="true if allegro has biotac attached"    />
+  <arg name="robot_name"     default="lbr4"  doc="Robot name for namespacing"             />
+  <arg name="rviz"           default="true"  doc="Launch rviz if true"                    />
+  <arg name="actuate_reflex" default="true"  doc="Set ReFlex joints as revolute if true"  />
+  
+  <!-- ========================================================================================== -->
+    
+  <node pkg="rviz" type="rviz" output="screen" name="rviz"
+	args="-d $(find ll4ma_robots_description)/config/robot.rviz" if="$(arg rviz)"/>
+
+  <param name="robot_description" command="
+        $(find xacro)/xacro '$(find ll4ma_robots_description)/robots/lbr4.robot.xacro'
+	end_effector:=$(arg end_effector)
+	ft_sensor:=$(arg ft_sensor)
+	gazebo:=$(arg gazebo)
+	omni:=$(arg omni)
+	robot_table:=$(arg table)
+	biotac:=$(arg biotac)
+	robot_name:=$(arg robot_name)
+	actuate_reflex:=$(arg actuate_reflex)
+        --inorder"/>
+        
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+    <remap if="$(eval end_effector == 'None')" from="/joint_states" to="/lbr4/joint_states"/>
+    <remap unless="$(eval end_effector == 'None')" from="/joint_states" 
+        to="/lbr4_$(arg end_effector)/joint_states"/>
+  </node>
+  
+  <node pkg="joint_state_publisher" type="joint_state_publisher" output="screen"
+        name="joint_state_publisher">
+    <rosparam param="source_list" if="$(eval end_effector == 'allegro')">
+      ["/lbr4/joint_states","/allegro_hand_right/joint_states"]
+    </rosparam>
+    <rosparam param="source_list" if="$(eval end_effector == 'reflex')">
+      ["/lbr4/joint_states","/reflex/joint_states"]
+    </rosparam>
+    <param name="use_gui" value="$(arg jsp_gui)"/>
+    <param name="publish_default_velocities" value="true"/>
+    <param name="publish_default_efforts" value="true"/>
+    <param name="rate" value="100"/>
+    <remap if="$(eval end_effector == 'None')" from="/joint_states" to="/lbr4/joint_states"/>
+    <remap unless="$(eval end_effector == 'None')" from="/joint_states" 
+           to="/lbr4_$(arg end_effector)/joint_states"/>
+    <remap if="$(eval end_effector == 'None')" from="/joint_states" to="/lbr4/joint_states"/>
+
+  </node>
+
+</launch>

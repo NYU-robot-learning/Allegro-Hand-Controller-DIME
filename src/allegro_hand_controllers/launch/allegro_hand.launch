@@ -38,7 +38,7 @@
 
   <!-- Visualization with rviz, only if arg VISUALIZE is set to true. Default is
        false, the allegro_viz.launch can be started separated. -->
-  <arg name ="VISUALIZE" default="true" />
+  <arg name ="VISUALIZE" default="false" />
   <include file="$(find allegro_hand_controllers)/launch/visualizer.launch"
            if="$(arg VISUALIZE)">
   </include>
@@ -87,8 +87,6 @@
     <rosparam file="$(arg ZEROS)" command="load" />
 
     <rosparam file="$(arg PARAMS_DIR)/gains_pd.yaml" command="load" />
-    <!-- <rosparam file="$(arg PARAMS_DIR)/gains_velSat.yaml" command="load" /> -->
-    <rosparam file="$(arg PARAMS_DIR)/shared.yaml" command="load" />
     <rosparam file="$(arg PARAMS_DIR)/initial_position.yaml" command="load" />
 
     <!-- Set the CAN channel automatically (using detect_pcan.py) if the

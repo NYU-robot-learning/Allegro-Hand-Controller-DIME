@@ -1,0 +1,214 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="lbr4">
+
+  <xacro:arg name="end_effector"      default="None"  /> <!-- [allegro, reflex, push_stick, rigid_obj] -->
+  <xacro:arg name="ft_sensor"         default="true" />
+  <xacro:arg name="robot_table"       default="false" />
+  <xacro:arg name="object_high_table" default="false" />
+  <xacro:arg name="object_low_table"  default="false" />
+  <xacro:arg name="robot_name"        default="lbr4"  />
+  <xacro:arg name="control"           default="false" />
+  <xacro:arg name="biotac"            default="true" />
+  <xacro:arg name="actuate_reflex"    default="false" />
+  <xacro:arg name="gazebo"            default="false"  />
+  <xacro:arg name="rtt_gazebo"        default="false" /> <!-- Set true if simulating with Orocos -->
+  <xacro:arg name="asus_xtion"       default="false" />
+
+  <!-- ========================================================================================== -->
+
+  <!-- Set xacro properties -->
+  <xacro:property name="end_effector" value="$(arg end_effector)"/>
+  <xacro:property name="M_PI"         value="3.1415926535897931"/>
+  <xacro:property name="urdf_path"    value="$(find ll4ma_robots_description)/urdf"/>
+  <!-- Need to set lbr4_j6 joint damping lower than usual if using RTT embedded Gazebo and Orocos. -->
+  <!-- If this is not done, the robot model blows up. Not sure why.-->
+  <xacro:if value="$(arg rtt_gazebo)">
+    <xacro:property name="j6_damping" value="2"/>
+  </xacro:if>
+  <xacro:unless value="$(arg rtt_gazebo)">
+    <xacro:property name="j6_damping" value="5"/>
+  </xacro:unless>
+
+  <!-- ========================================================================================== -->
+  <!-- Frame parameters-->
+  <xacro:property name="ee_mount_frame" value="lbr4_8_link"/>
+  <!-- LBR4 -->
+  <xacro:include filename="${urdf_path}/lbr4/lbr4.urdf.xacro"/>
+  <xacro:include filename="${urdf_path}/lbr4/lbr4_base.urdf.xacro"/>
+  <xacro:lbr4_base name="$(arg robot_name)"/>
+  <xacro:lbr4 name="$(arg robot_name)" parent="$(arg robot_name)_base_link" j6_damping="${j6_damping}">
+    <origin xyz="0.0015 -0.0015 0.019" rpy="0 0 0"/>
+  </xacro:lbr4>
+
+  <!-- World -->
+  <link name="world" />
+  <!-- World to base (if no table) -->
+  <xacro:unless value="$(arg robot_table)">
+    <joint name="world_to_base_joint" type="fixed">
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <parent link="world"/>
+      <child link="$(arg robot_name)_base_link"/>
+    </joint>
+  </xacro:unless>
+  
+  <!-- Force/Torque sensor -->
+  <xacro:if value="$(arg ft_sensor)">
+    <xacro:include filename="${urdf_path}/force_sensors/optoforce_sensor.urdf.xacro"/>
+    <joint name="optoforce_to_lbr4" type="fixed">
+      <parent link="lbr4_8_link"/>
+      <child link="optoforce_model_link"/>
+      <origin xyz="0 0 0" rpy="0 0 -1.57"/>
+    </joint>
+    <link name="optoforce_offset_link">
+      <inertial> 
+	<origin xyz="0 0 0" rpy="0 0 0" />
+	<mass value="0.00001" />
+	<inertia ixx="1e-08" ixy="0.0" ixz="0.0" iyy="1e-08" iyz="0.0" izz="1e-08"/>
+      </inertial>
+    </link>
+    <joint name="optoforce_offset_to_lbr4" type="fixed">
+      <parent link="optoforce_sensor_link"/>
+      <child link="optoforce_offset_link"/>
+      <origin xyz="0 0 0" rpy="0 0 1.57"/>
+    </joint>
+    <xacro:property name="ee_mount_frame" value="optoforce_offset_link"/>
+  </xacro:if>
+  
+  <!-- Gazebo -->
+  <xacro:if value="$(arg gazebo)">
+    <xacro:include filename="${urdf_path}/lbr4/lbr4.gazebo.xacro">
+      <xacro:arg name="ft_sensor"  value="$(arg ft_sensor)"/>
+      <xacro:arg name="robot_name" value="$(arg robot_name)"/>
+    </xacro:include>
+  </xacro:if>
+  
+  <!-- Allegro hand -->
+  <xacro:if value="${end_effector == 'allegro'}">
+    <xacro:include filename="$(find ll4ma_robots_description)/robots/allegro.robot.xacro">
+      <xacro:arg name="gazebo" value="$(arg gazebo)"/>
+      <xacro:arg name="control" value="$(arg control)"/>
+      <xacro:arg name="biotac" value="$(arg biotac)"/>
+    </xacro:include>
+    
+    <!-- Include the KUKA mount -->
+    <xacro:include filename="${urdf_path}/mounts/lbr4_mount.urdf.xacro"/>
+    <xacro:lbr4_mount parent="${ee_mount_frame}"/>
+    
+    <joint name="lbr4_allegro" type="fixed">
+      <parent link="lbr4_mount"/>
+      <child link="allegro_mount"/>
+      <origin xyz="-0.0 0 -0.0" rpy="0 1.57 0"/>
+    </joint>
+  </xacro:if>
+
+  <!-- ReFlex Hand -->
+  <xacro:if value="${end_effector == 'reflex'}">
+    
+    <xacro:include filename="${urdf_path}/reflex/reflex.urdf.xacro"/>
+
+    <!-- Include the KUKA mount -->
+    <xacro:include filename="${urdf_path}/mounts/lbr4_mount.urdf.xacro"/>
+    <xacro:lbr4_mount parent="${ee_mount_frame}"/>
+
+    <!-- Include the ReFlex mount -->
+    <xacro:include filename="${urdf_path}/mounts/lbr4_reflex_mount.urdf.xacro"/>
+
+    <joint name="reflex_mount_to_lbr4_mount" type="fixed">
+      <parent link="lbr4_mount"/>
+      <child link="reflex_mount"/>
+      <origin xyz="-0.003 -0.002 0" rpy="0.0 ${M_PI/2} 0.17"/>
+    </joint>
+    
+    <joint name="reflex_mount_to_reflex" type="fixed">
+      <parent link="reflex_mount"/>
+      <child link="shell"/>
+      <origin xyz="0.013 0.0025 0" rpy="${M_PI} ${-M_PI/2} 0"/>
+    </joint>
+
+    <xacro:if value="$(arg gazebo)">
+      <xacro:include filename="$(find ll4ma_robots_description)/urdf/reflex/reflex.gazebo.xacro"/>
+    </xacro:if>
+    
+  </xacro:if>
+
+  <xacro:if value="${end_effector == 'rigid_obj'}">
+
+    <xacro:include filename="${urdf_path}/end_effectors/rigid_obj.urdf.xacro"/>
+    <xacro:rigid_obj parent="${ee_mount_frame}"/>
+    
+  </xacro:if>
+  <!-- Push-stick -->
+  <xacro:if value="${end_effector == 'push_stick'}">
+    <xacro:include filename="${urdf_path}/end_effectors/push_stick.urdf.xacro"/>
+    <xacro:include filename="${urdf_path}/mounts/optoforce_push_stick_mount.urdf.xacro"/>
+    
+    <xacro:optoforce_push_stick_mount/>
+    <xacro:push_stick/>
+    
+    <joint name="optoforce_to_push_stick_mount" type="fixed">
+      <xacro:if value="$(arg gazebo)">
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<parent link="optoforce_sensor_link"/>
+      </xacro:if>
+      <xacro:unless value="$(arg gazebo)">
+	<origin xyz="0 0 0.035" rpy="0 0 0"/>
+	<parent link="optoforce_model_link"/>
+      </xacro:unless>
+      
+      <child link="optoforce_push_stick_mount_link" />
+    </joint>
+    
+    <joint name="optoforce_mount_to_push_stick" type="fixed">
+      <origin xyz="0 0 0.01" rpy="0 0 0" />
+      <parent link="optoforce_push_stick_mount_link" />
+      <child link="push_stick_link" />
+    </joint>
+  </xacro:if>
+
+  <!-- Robot Table -->
+  <xacro:if value="$(arg robot_table)">
+    <xacro:include filename="${urdf_path}/environment/table.urdf.xacro"/>
+    <xacro:table table_name="robot" h="0.59" w="0.9125" d="0.61"/>
+    <joint name="world_to_robot_table_joint" type="fixed">
+      <origin xyz="0 0 0.295" rpy="0 0 0"/>
+      <parent link="world"/>
+      <child link="robot_table_link"/>
+    </joint>
+    <joint name="robot_table_to_base_joint" type="fixed">
+      <origin xyz="0 0 0.295" rpy="0 0 1.57" />
+      <parent link="robot_table_link" />
+      <child link="$(arg robot_name)_base_link" />
+    </joint>
+  </xacro:if>
+
+  <!-- Object Table -->
+  <xacro:if value="$(arg object_low_table)">
+    <xacro:include filename="${urdf_path}/environment/table.urdf.xacro"/>
+    <xacro:table table_name="object" h="0.59" w="0.9125" d="0.61"/>
+    <joint name="world_to_object_table_joint" type="fixed">
+      <origin xyz="0.0 -0.765 0.295" rpy="0 0 ${pi/2}"/>
+      <parent link="world"/>
+      <child link="object_table_link"/>
+    </joint>
+  </xacro:if>
+  <xacro:if value="$(arg object_high_table)">
+    <xacro:include filename="${urdf_path}/environment/table.urdf.xacro"/>
+    <xacro:table table_name="object" h="0.88" w="1.22" d="0.76"/>
+    <joint name="world_to_object_table_joint" type="fixed">
+      <origin xyz="0.85 0 0.44" rpy="0 0 0"/>
+      <parent link="world"/>
+      <child link="object_table_link"/>
+    </joint>
+  </xacro:if>
+
+  <!-- ASUS Xtion Pro Camera -->
+  <xacro:if value="$(arg asus_xtion)">
+    <xacro:include filename="${urdf_path}/cameras/asus_xtion.urdf.xacro"/>
+    <joint name="asus_xtion_joint" type="fixed">
+      <origin xyz="0 -0.4 0.6" rpy="0 0.4 ${pi + -0.5}"/>
+      <parent link="$(arg robot_name)_base_link"/>
+      <child link="asus_xtion_link"/>
+    </joint>
+  </xacro:if>
+  
+</robot>

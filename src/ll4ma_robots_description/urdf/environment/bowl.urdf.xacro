@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="bowl">
+  
+  <link name="bowl_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 1.57 0"/>
+      <mass value="100.0"/>
+      <inertia ixx="1.0"  ixy="0"  ixz="0" iyy="1.0" iyz="0" izz="1.0" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 1.57 0" />
+      <geometry>
+	<mesh filename="package://ll4ma_robots_description/meshes/environment/bowl.stl"
+	      scale="0.002 0.002 0.002"/>
+      </geometry>
+      <material name="green">
+	<color rgba="0 0.6 0.6 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 1.57 0" />
+      <geometry>
+	<mesh filename="package://ll4ma_robots_description/meshes/environment/bowl.stl"
+	      scale="0.002 0.002 0.002"/>
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="bowl_link">
+    <mu1>0.01</mu1> <!-- TEMPORARY can make higher to be more like a table -->
+    <mu2>0.01</mu2> 
+
+  <!--   <material>Gazebo/Blue</material> -->
+  </gazebo>
+  
+</robot>

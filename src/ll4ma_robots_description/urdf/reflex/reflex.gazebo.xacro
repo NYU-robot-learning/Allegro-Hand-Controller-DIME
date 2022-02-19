@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  
+  <!-- ============================== Transmissions ============================== -->
+
+  <xacro:if value="$(arg actuate_reflex)">
+    <xacro:include filename="$(find ll4ma_robots_description)/urdf/reflex/reflex.transmission.xacro"/>
+  </xacro:if>
+
+
+  
+  <!-- ================================ Materials ================================ -->
+
+  <xacro:macro name="color_swivel" params="finger_id">
+    <gazebo reference="swivel_${finger_id}">
+      <material>Gazebo/Black</material>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="color_distal" params="finger_id">
+    <gazebo reference="distal_${finger_id}">
+      <material>Gazebo/FlatBlack</material>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="color_proximal" params="finger_id">
+    <gazebo reference="proximal_${finger_id}">
+      <material>Gazebo/FlatBlack</material>
+    </gazebo>
+  </xacro:macro>
+  
+  <xacro:macro name="color_distal_pad" params="finger_id">
+    <gazebo reference="distal_${finger_id}_pad">
+      <material>Gazebo/FlatBlack</material>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="color_proximal_pad" params="finger_id">
+    <gazebo reference="proximal_${finger_id}_pad">
+      <material>Gazebo/FlatBlack</material>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="color_flex" params="finger_id">
+    <gazebo reference="finger_${finger_id}_flex_link">
+      <material>Gazebo/YellowTransparent</material>
+    </gazebo>
+  </xacro:macro>
+
+
+  
+  <!-- ========================== Contact/Pressure sensors =========================== -->
+
+  <xacro:macro name="reflex_sensor" params="type location finger_id sensor_id">
+    <gazebo reference="${location}_${finger_id}_sensor_${sensor_id}">
+      <xacro:property name="sensor_name"
+		      value="reflex/${location}_${finger_id}_${type}_sensor_${sensor_id}"/>
+      <sensor name="${sensor_name}" type="contact">
+	<plugin name="${sensor_name}_plugin" filename="lib${type}_sensor_plugin.so">	
+	  <updateRate>100</updateRate> <!-- In range [0, 1000] -->
+	</plugin>
+	<contact>
+	  <collision>${sensor_name}_collision</collision> <!-- Auto-determined by SDF -->
+	</contact>
+      </sensor>
+      <material>Gazebo/GreenTransparent</material>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="preserve_fixed" params="location finger_id sensor_id">
+    <gazebo reference="${location}_${finger_id}_to_sensor_${sensor_id}">
+      <preserveFixedJoint>true</preserveFixedJoint>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="gazebo_finger" params="sensor_type id">
+    <xacro:color_swivel       finger_id="${id}"/>
+    <xacro:color_distal       finger_id="${id}"/>
+    <xacro:color_proximal     finger_id="${id}"/>
+    <xacro:color_distal_pad   finger_id="${id}"/>
+    <xacro:color_proximal_pad finger_id="${id}"/>
+    <xacro:color_flex         finger_id="${id}"/>
+
+    <xacro:reflex_sensor type="${sensor_type}" location="proximal" finger_id="${id}" sensor_id="1"/>
+    <xacro:reflex_sensor type="${sensor_type}" location="proximal" finger_id="${id}" sensor_id="2"/>
+    <xacro:reflex_sensor type="${sensor_type}" location="proximal" finger_id="${id}" sensor_id="3"/>
+    <xacro:reflex_sensor type="${sensor_type}" location="proximal" finger_id="${id}" sensor_id="4"/>
+    <xacro:reflex_sensor type="${sensor_type}" location="proximal" finger_id="${id}" sensor_id="5"/>
+    <xacro:reflex_sensor type="${sensor_type}" location="distal"   finger_id="${id}" sensor_id="1"/>
+    <xacro:reflex_sensor type="${sensor_type}" location="distal"   finger_id="${id}" sensor_id="2"/>
+    <xacro:reflex_sensor type="${sensor_type}" location="distal"   finger_id="${id}" sensor_id="3"/>
+    <xacro:reflex_sensor type="${sensor_type}" location="distal"   finger_id="${id}" sensor_id="4"/>
+
+    <xacro:preserve_fixed location="proximal" finger_id="${id}" sensor_id="1"/>
+    <xacro:preserve_fixed location="proximal" finger_id="${id}" sensor_id="2"/>
+    <xacro:preserve_fixed location="proximal" finger_id="${id}" sensor_id="3"/>
+    <xacro:preserve_fixed location="proximal" finger_id="${id}" sensor_id="4"/>
+    <xacro:preserve_fixed location="proximal" finger_id="${id}" sensor_id="5"/>
+    <xacro:preserve_fixed location="distal"   finger_id="${id}" sensor_id="1"/>
+    <xacro:preserve_fixed location="distal"   finger_id="${id}" sensor_id="2"/>
+    <xacro:preserve_fixed location="distal"   finger_id="${id}" sensor_id="3"/>
+    <xacro:preserve_fixed location="distal"   finger_id="${id}" sensor_id="4"/>
+  </xacro:macro>
+
+
+
+  
+  <!-- ================================================================================ -->
+
+  <!-- These use the preceding macros to set colors and add sensors to the fingers -->
+  
+  <gazebo reference="shell">
+    <material>Gazebo/Black</material>
+  </gazebo>
+  
+  <gazebo reference="pad">
+    <material>Gazebo/FlatBlack</material>
+  </gazebo>
+
+  <!-- TODO create an arg for sensor type when done testing -->
+  <xacro:gazebo_finger sensor_type="pressure" id="1"/>
+  <xacro:gazebo_finger sensor_type="pressure" id="2"/>
+  <xacro:gazebo_finger sensor_type="pressure" id="3"/>
+      
+</robot>

@@ -1,0 +1,114 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- ======================== BASE PARAMS ========================= -->
+  <!-- ======================== FINGER PARAMS ======================== -->
+  <!-- full height from joint to tip. when used,
+       the radius of the finger tip sphere will be subtracted
+       and one fixed link will be added for the tip. -->
+  <!-- ========================= THUMB PARAMS ========================= -->
+  <!-- ========================= LIMITS ========================= -->
+  <!-- ============================================================================= -->
+  <!-- [FINGER TIP] -->
+  <link name="index_tip">
+    <visual>
+      <geometry>
+        <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_3.0_tip.stl"/>
+      </geometry>
+      <material name="White"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.012"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.0168" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="9.68e-07" ixy="0" ixz="0" iyy="9.68e-07" iyz="0" izz="9.68e-07" />
+    </inertial>
+  </link>
+  <joint name="index_tip_joint" type="fixed">
+    <parent link="index_link_3"/>
+    <child link="index_tip"/>
+    <origin rpy="0 0 0" xyz="0 0 0.0267"/>
+  </joint>
+
+
+  <!-- [FINGER TIP] -->
+  <link name="middle_tip">
+    <visual>
+      <geometry>
+        <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_3.0_tip.stl"/>
+      </geometry>
+      <material name="White"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.012"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.0168" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="9.68e-07" ixy="0" ixz="0" iyy="9.68e-07" iyz="0" izz="9.68e-07" />
+    </inertial>
+  </link>
+  <joint name="middle_tip_joint" type="fixed">
+    <parent link="middle_link_3"/>
+    <child link="middle_tip"/>
+    <origin rpy="0 0 0" xyz="0 0 0.0267"/>
+  </joint>
+
+  <!-- [FINGER TIP] -->
+  <link name="ring_tip">
+    <visual>
+      <geometry>
+        <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_3.0_tip.stl"/>
+      </geometry>
+      <material name="White"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.012"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.0168" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="9.68e-07" ixy="0" ixz="0" iyy="9.68e-07" iyz="0" izz="9.68e-07" />
+    </inertial>
+  </link>
+  <joint name="ring_tip_joint" type="fixed">
+    <parent link="ring_link_3"/>
+    <child link="ring_tip"/>
+    <origin rpy="0 0 0" xyz="0 0 0.0267"/>
+  </joint>
+
+  <!-- THUMB -->
+
+  <!-- [FINGER TIP] -->
+  <link name="thumb_tip">
+    <visual>
+      <geometry>
+        <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_15.0_tip.stl"/>
+      </geometry>
+      <material name="White"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.012"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="0.0168" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="9.68e-07" ixy="0" ixz="0" iyy="9.68e-07" iyz="0" izz="9.68e-07" />
+    </inertial>
+  </link>
+  <joint name="thumb_tip_joint" type="fixed">
+    <parent link="thumb_link_3_offset"/>
+    <child link="thumb_tip"/>
+    <origin rpy="0 0 0" xyz="0 0 0.0267"/>
+  </joint>
+</robot>

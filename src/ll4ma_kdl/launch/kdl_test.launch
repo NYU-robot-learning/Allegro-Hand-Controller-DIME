@@ -1,0 +1,17 @@
+<launch>
+  <arg name="end_effector" default="None"  doc="[allegro, reflex, push_stick] End-effector."       />
+  <arg name="ft_sensor" default="false" doc="[true, false] Use Optoforce FT Sensor if true."       />
+  <arg name="jsp_gui"   default="false" doc="[true, false] Control joint angles with GUI if true." />
+  <arg name="omni"      default="false" doc="[true, false] Control robot pose with Omni if true."  />
+  <arg name="table"     default="false" doc="[true, false] Mount robot on table if true."          />
+
+  <param name="robot_description" command="
+					   $(find xacro)/xacro '$(find urlg_robots_description)/robots/lbr4.robot.xacro'
+	end_effector:=$(arg end_effector)
+	ft_sensor:=$(arg ft_sensor)
+	gazebo:=false
+	omni:=$(arg omni)
+        table:=$(arg table)
+        --inorder"/>
+  <node name="kdl_tester" pkg="ll4ma_kdl" type="kdl_test_node" output="screen"/>
+</launch>

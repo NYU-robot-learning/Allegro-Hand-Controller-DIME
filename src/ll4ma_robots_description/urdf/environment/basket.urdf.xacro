@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="box">
+
+  <!-- This creates an open box, i.e. 5-sided box with open side facing up. -->
+  
+  <xacro:arg name="create_box" default="true"/>
+  <xacro:arg name="x_extent"   default="0.2"/>
+  <xacro:arg name="y_extent"   default="0.2"/>
+  <xacro:arg name="z_extent"   default="0.2"/>
+
+  <!-- ======================================================================================= -->
+  
+  <xacro:include filename="$(find ll4ma_robots_description)/urdf/xacro_macros/inertia_tensors.xacro"/>
+
+
+  <xacro:macro name="wall" params="link_name x_extent y_extent z_extent mass">
+    <link name="${link_name}">
+      <inertial>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="${mass}"/>
+	<xacro:cuboid_inertia m="${mass}" x="${x_extent}" y="${y_extent}" z="${z_extent}"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+    	  <box size="${x_extent} ${y_extent} ${z_extent}" />
+        </geometry>
+        <material name="blue">
+	  <color rgba="0 0 0.8 1"/>
+	</material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+	  <box size="${x_extent} ${y_extent} ${z_extent}" />
+        </geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+
+  
+  <xacro:macro name="open_box" params="x_extent:=1 y_extent:=1 z_extent:=1">
+    <xacro:property name="link_mass" value="1"/>
+    <xacro:property name="wall_thickness" value="0.01"/>
+
+    <xacro:wall link_name="box_base" x_extent="${x_extent-wall_thickness}"
+		y_extent="${y_extent-wall_thickness}" z_extent="${wall_thickness}"
+		mass="${link_mass}"/>
+    
+    <xacro:wall link_name="box_left_wall" x_extent="${x_extent+wall_thickness}"
+		y_extent="${wall_thickness}" z_extent="${z_extent}" mass="${link_mass}"/>
+    <joint name="base_to_left_wall" type="fixed">
+      <origin xyz="0 ${-y_extent/2} ${(z_extent-wall_thickness)/2}" rpy="0 0 0"/>
+      <parent link="box_base"/>
+      <child link="box_left_wall"/>
+    </joint>
+
+    <xacro:wall link_name="box_right_wall" x_extent="${x_extent+wall_thickness}"
+		y_extent="${wall_thickness}" z_extent="${z_extent}" mass="${link_mass}"/>
+    <joint name="base_to_right_wall" type="fixed">
+      <origin xyz="0 ${y_extent/2} ${(z_extent-wall_thickness)/2}" rpy="0 0 0"/>
+      <parent link="box_base"/>
+      <child link="box_right_wall"/>
+    </joint>
+
+    <xacro:wall link_name="box_back_wall" x_extent="${wall_thickness}"
+		y_extent="${y_extent-wall_thickness}" z_extent="${z_extent}" mass="${link_mass}"/>
+    <joint name="base_to_back_wall" type="fixed">
+      <origin xyz="${-x_extent/2} 0 ${(z_extent-wall_thickness)/2}" rpy="0 0 0"/>
+      <parent link="box_base"/>
+      <child link="box_back_wall"/>
+    </joint>
+
+    <xacro:wall link_name="box_front_wall" x_extent="${wall_thickness}"
+		y_extent="${y_extent-wall_thickness}" z_extent="${z_extent}" mass="${link_mass}"/>
+    <joint name="base_to_front_wall" type="fixed">
+      <origin xyz="${x_extent/2} 0 ${(z_extent-wall_thickness)/2}" rpy="0 0 0"/>
+      <parent link="box_base"/>
+      <child link="box_front_wall"/>
+    </joint>
+    
+  </xacro:macro>
+  
+  <xacro:if value="$(arg create_box)">
+    <xacro:open_box x_extent="$(arg x_extent)" y_extent="$(arg y_extent)" z_extent="$(arg z_extent)"/>
+  </xacro:if>
+  
+</robot>

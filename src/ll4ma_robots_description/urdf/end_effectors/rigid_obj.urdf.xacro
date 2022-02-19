@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="rigid_obj" params="parent">
+
+    <link name="obj_link">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <mass value="0.001" />
+        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01" />
+      </inertial>
+      <visual>
+        <origin xyz="-0.0 0 0.0" rpy="0.0 0 0" />
+	<geometry>
+	<mesh
+	      filename="package://ll4ma_robots_description/meshes/end_effectors/sysid_obj.stl"
+	      scale="1 1 1"/>
+        </geometry>
+	<material name="green">
+	  <color rgba="0.0 0.7 0.0 1"/>
+	</material>
+	
+      </visual>
+      <collision>
+        <origin xyz="0 0 0.0" rpy="0 0 0" />
+	<geometry>
+	<mesh
+	      filename="package://ll4ma_robots_description/meshes/end_effectors/sysid_obj.stl"
+	      scale="1 1 1"/>
+        </geometry>
+
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.01</mu>
+              <mu2>0.01</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+    </link>
+    
+    <joint name="end_to_obj" type="fixed">
+      <origin xyz="0.051 -0.031 0.065" rpy="1.5708 0 3.14" />
+      <parent link="${parent}" />
+      <child link="obj_link" />
+    </joint>
+        
+  </xacro:macro>
+
+  <gazebo reference="obj_link">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+</robot>

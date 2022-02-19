@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="panda">
+
+  <!-- This file will be more useful if you end up wanting to put a different EE on the Franka
+       or configure the xacro more. All this does right now is add a prefix to the link names. -->
+  
+  <xacro:arg name="link_prefix" default="panda"/>
+
+  <!-- ========================================================================================== -->
+
+  <xacro:include filename="$(find ll4ma_robots_description)/urdf/panda/panda.urdf.xacro"/>
+
+  <xacro:panda link_prefix="$(arg link_prefix)"/>
+  
+</robot>

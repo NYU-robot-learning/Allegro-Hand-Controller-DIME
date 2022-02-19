@@ -1,0 +1,854 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- ======================== BASE PARAMS ========================= -->
+  <!-- ======================== FINGER PARAMS ======================== -->
+  <!-- full height from joint to tip. when used,
+       the radius of the finger tip sphere will be subtracted
+       and one fixed link will be added for the tip. -->
+  <!-- ========================= THUMB PARAMS ========================= -->
+  <!-- ========================= LIMITS ========================= -->
+  <!-- ============================================================================= -->
+  <!-- BASE -->
+  <link name="allegro_mount">
+    <inertial>
+        <mass value="0.05" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="1e-4" ixy="0" ixz="0" iyy="1e-4" iyz="0" izz="1e-4" />
+    </inertial>
+    <visual>
+        <origin xyz="-0.0 -0.0425 -0.0425" rpy="0 0 0" />
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/mounts/allegro_mount.stl" />
+        </geometry>
+        <material name="color_j7" />
+    </visual>
+    <collision>
+        <origin xyz="-0.0 -0.0425 -0.0425" rpy="0 0 0" />
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/mounts/allegro_mount.stl" />
+        </geometry>
+    </collision>
+    </link>
+
+    <joint name="allegro_mount_joint" type="fixed">
+        <origin xyz="0.108 0 -0.008" rpy="0 1.5708 0" />
+        <parent link="allegro_mount" />
+        <child link="palm_link" />
+    </joint>
+
+
+    <!-- BASE -->
+    <link name="palm_link">
+    <inertial>
+        <mass value="0.4154" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="1e-4" ixy="0" ixz="0" iyy="1e-4" iyz="0" izz="1e-4" />
+    </inertial>
+    <visual>
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/allegro/base_link_biotac.stl" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0 " />
+        <material name="Grey">
+            <color rgba="0.2 0.2 0.2 1" />
+        </material>
+    </visual>
+    <collision>
+        <origin rpy="0 0 0" xyz="-0.009300 0 -0.0475" />
+        <geometry>
+            <box size="0.0408 0.1130 0.095" />
+        </geometry>
+    </collision>
+
+    </link>
+    <gazebo reference="palm_link">
+        <material value="Gazebo/Grey" />
+    </gazebo>
+    <!-- ============================================================================= -->
+    <!-- FINGERS -->
+    <!-- RIGHT HAND due to which finger is number 0 -->
+    <!-- for LEFT HAND switch the sign of the **offset_origin_y** and **finger_angle_r** parameters-->
+    <!-- [LINK 0, 4, 8] -->
+    <link name="index_link_0">
+    <visual>
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_0.0.stl" />
+        </geometry>
+        <material name="Grey" />
+    </visual>
+    <collision>
+        <geometry>
+            <box size="0.0196 0.0275 0.0164" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0.0082" />
+    </collision>
+    <inertial>
+        <mass value="0.0119" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="1.01666658333e-06" ixy="0.0" ixz="0.0" iyy="6.47677333333e-07" iyz="0.0" izz="1.01666658333e-06" />
+    </inertial>
+    </link>
+    <gazebo reference="index_link_0">
+        <material value="Gazebo/Grey" />
+    </gazebo>
+    <joint name="index_joint_0" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit effort="15" lower="-0.65" upper="0.65" velocity="7" />
+        <parent link="palm_link" />
+        <child link="index_link_0" />
+        <origin rpy="-0.08726646255 0 0" xyz="0 0.0435 -0.001542" />
+        <dynamics damping="1" friction="0" />
+    </joint>
+    <!-- [LINK 1, 5, 9] -->
+    <link name="index_link_1">
+    <visual>
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_1.0.stl" />
+        </geometry>
+
+        <material name="Grey" />
+    </visual>
+    <collision>
+        <geometry>
+            <box size="0.0196 0.0275 0.054" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0.027" />
+    </collision>
+    <inertial>
+        <mass value="0.065" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="7.95654166667e-05" ixy="1.7199e-05" ixz="8.75875e-06" iyy="2.47088833333e-05" iyz="2.413125e-05" izz="7.95654166667e-05" />
+    </inertial>
+    </link>
+    <gazebo reference="index_link_1">
+        <material value="Gazebo/Grey" />
+    </gazebo>
+    <joint name="index_joint_1" type="revolute">
+        <limit effort="15" lower="-0.4" upper="1.8" velocity="7" />
+        <axis xyz="0 1 0" />
+        <parent link="index_link_0" />
+        <child link="index_link_1" />
+        <origin xyz="0 0 0.0164" />
+        <dynamics damping="1" friction="0" />
+    </joint>
+
+    <!-- [LINK 2, 6, 10]-->
+    <link name="index_link_2">
+    <visual>
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_2.0.stl" />
+        </geometry>
+        <material name="Grey" />
+    </visual>
+    <collision>
+        <geometry>
+            <box size="0.0196 0.0275 0.0384" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0.0192" />
+    </collision>
+    <inertial>
+        <mass value="0.0355" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="2.63979183333e-05" ixy="6.67968e-06" ixz="4.783625e-06" iyy="1.34948516667e-05" iyz="9.372e-06" izz="2.63979183333e-05" />
+    </inertial>
+    </link>
+    <gazebo reference="index_link_2">
+        <material value="Gazebo/Grey" />
+    </gazebo>
+    <joint name="index_joint_2" type="revolute">
+        <axis xyz="0 1 0" />
+        <limit effort="15" lower="-0.4" upper="1.8" velocity="7" />
+        <parent link="index_link_1" />
+        <child link="index_link_2" />
+        <origin xyz="0 0 0.054" />
+        <dynamics damping="1" friction="0" />
+    </joint>
+
+    <!-- [LINK 3, 7, 11] -->
+    <link name="index_link_3">
+    <visual>
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_3.0.stl" />
+        </geometry>
+        <material name="Grey" />
+    </visual>
+    <collision>
+        <geometry>
+            <box size="0.0196 0.0275 0.0167" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0.00835" />
+    </collision>
+    <inertial>
+        <mass value="0.0096" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="4.701248e-06" ixy="1.255968e-06" ixz="1.2936e-06" iyy="3.649312e-06" iyz="1.7622e-06" izz="4.701248e-06" />
+    </inertial>
+    </link>
+    <gazebo reference="index_link_3">
+        <material value="Gazebo/Grey" />
+    </gazebo>
+    <joint name="index_joint_3" type="revolute">
+        <axis xyz="0 1 0" />
+        <limit effort="15" lower="-0.4" upper="1.8" velocity="7" />
+        <parent link="index_link_2" />
+        <child link="index_link_3" />
+        <origin xyz="0 0 0.0384" />
+        <dynamics damping="10" friction="0" />
+    </joint>
+
+    <!-- [FINGER TIP] -->
+    
+    <link name="index_tip">
+      <visual>
+	<!--origin rpy="0.1 0 1.57" xyz="0.0102 -0.01  -0.055" /-->
+      <origin rpy="0.0 1.57 1.57" xyz="-0.00277 0.0  -0.00545" />
+      <geometry>
+        <mesh filename="package://ll4ma_robots_description/meshes/biotac/biotac_base.stl" />
+      </geometry>
+      <material name="Green">
+        <color rgba="0.0 0.8 .0 1" />
+      </material>
+
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.015 0.015 0.015" />
+      </geometry>
+      <origin rpy="0 0.0 0.0" xyz="-0.008 0 -0.018" />
+    </collision>
+    <inertial>
+        <mass value="0.021" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="9.68e-07" ixy="0" ixz="0" iyy="9.68e-07" iyz="0" izz="9.68e-07" />
+    </inertial>
+    </link>
+
+    <gazebo reference="index_tip">
+        <material value="Gazebo/Green" />
+    </gazebo>
+    <joint name="index_tip_joint" type="fixed">
+        <parent link="index_link_3" />
+        <child link="index_tip" />
+        <origin rpy="0 0 0" xyz="0.008 0.0 0.04" />
+    </joint>
+    
+    
+    <link name="index_biotac_origin">
+      <collision>
+	<geometry>
+	  <cylinder length="0.03" radius="0.008"/>
+      </geometry>
+      <origin rpy="0 1.57 0.0" xyz="-0.01 0 0.00" />
+    </collision>
+  </link>
+    <joint name="index_tip_bt" type="fixed">
+      <origin rpy="${0.0 * pi} ${-0.38875 * pi} ${0.0 * pi}" xyz="0.0005 0.00155 0.0155"/>
+      <!--origin rpy="${0.0 * pi} ${-0.38875 * pi} ${0.0 * pi}" xyz="0.0005 0.00155 0.0155"/-->
+	    
+      <parent link="index_tip"/>
+      <child link="index_biotac_origin"/>
+    </joint>
+    <link name="gazebo_sensor_frame"/>
+    <joint name="gazebo_index_sensor_joint" type="fixed">
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <parent link="index_biotac_origin"/>
+      <child link="gazebo_sensor_frame"/>
+    </joint>
+
+    <!-- [LINK 0, 4, 8] -->
+    <link name="middle_link_0">
+    <visual>
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_0.0.stl" />
+        </geometry>
+        <material name="Grey" />
+    </visual>
+    <collision>
+        <geometry>
+            <box size="0.0196 0.0275 0.0164" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0.0082" />
+    </collision>
+    <inertial>
+        <mass value="0.0119" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="1.01666658333e-06" ixy="0.0" ixz="0.0" iyy="6.47677333333e-07" iyz="0.0" izz="1.01666658333e-06" />
+    </inertial>
+    </link>
+    <gazebo reference="middle_link_0">
+        <material value="Gazebo/Grey" />
+    </gazebo>
+    <joint name="middle_joint_0" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit effort="15" lower="-0.65" upper="0.65" velocity="7" />
+        <parent link="palm_link" />
+        <child link="middle_link_0" />
+        <origin rpy="0.0 0 0" xyz="0 0 0.0007" />
+        <dynamics damping="1" friction="0" />
+    </joint>
+
+    <!-- [LINK 1, 5, 9] -->
+    <link name="middle_link_1">
+    <visual>
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_1.0.stl" />
+vvv        </geometry>
+        <material name="Grey" />
+    </visual>
+    <collision>
+        <geometry>
+            <box size="0.0196 0.0275 0.054" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0.027" />
+    </collision>
+    <inertial>
+        <mass value="0.065" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="7.95654166667e-05" ixy="1.7199e-05" ixz="8.75875e-06" iyy="2.47088833333e-05" iyz="2.413125e-05" izz="7.95654166667e-05" />
+    </inertial>
+    </link>
+    <gazebo reference="middle_link_1">
+        <material value="Gazebo/Grey" />
+    </gazebo>
+    <joint name="middle_joint_1" type="revolute">
+        <limit effort="15" lower="-0.4" upper="1.8" velocity="7" />
+        <axis xyz="0 1 0" />
+        <parent link="middle_link_0" />
+        <child link="middle_link_1" />
+        <origin xyz="0 0 0.0164" />
+        <dynamics damping="1" friction="0" />
+    </joint>
+
+    <!-- [LINK 2, 6, 10]-->
+    <link name="middle_link_2">
+    <visual>
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_2.0.stl" />
+        </geometry>
+        <material name="Grey" />
+    </visual>
+    <collision>
+        <geometry>
+            <box size="0.0196 0.0275 0.0384" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0.0192" />
+    </collision>
+    <inertial>
+        <mass value="0.0355" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="2.63979183333e-05" ixy="6.67968e-06" ixz="4.783625e-06" iyy="1.34948516667e-05" iyz="9.372e-06" izz="2.63979183333e-05" />
+    </inertial>
+    </link>
+    <gazebo reference="middle_link_2">
+        <material value="Gazebo/Grey" />
+    </gazebo>
+    <joint name="middle_joint_2" type="revolute">
+        <axis xyz="0 1 0" />
+        <limit effort="15" lower="-0.4" upper="1.8" velocity="7" />
+        <parent link="middle_link_1" />
+        <child link="middle_link_2" />
+        <origin xyz="0 0 0.054" />
+        <dynamics damping="1" friction="0" />
+    </joint>
+
+    <!-- [LINK 3, 7, 11] -->
+    <link name="middle_link_3">
+    <visual>
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_3.0.stl" />
+        </geometry>
+        <material name="Grey" />
+    </visual>
+    <collision>
+        <geometry>
+            <box size="0.0196 0.0275 0.0267" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0.01335" />
+    </collision>
+    <inertial>
+        <mass value="0.0096" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="4.701248e-06" ixy="1.255968e-06" ixz="1.2936e-06" iyy="3.649312e-06" iyz="1.7622e-06" izz="4.701248e-06" />
+    </inertial>
+    </link>
+    <gazebo reference="middle_link_3">
+        <material value="Gazebo/Grey" />
+    </gazebo>
+    <joint name="middle_joint_3" type="revolute">
+        <axis xyz="0 1 0" />
+        <limit effort="15" lower="-0.4" upper="1.8" velocity="7" />
+        <parent link="middle_link_2" />
+        <child link="middle_link_3" />
+        <origin xyz="0 0 0.0384" />
+        <dynamics damping="10" friction="0" />
+    </joint>
+
+    <!-- [FINGER TIP] -->
+    <link name="middle_tip">
+      <visual>
+	<!--origin rpy="0.0 1.57 1.57" xyz="-0.015 -0.0  -0.04" /-->
+      <origin rpy="0.0 1.57 1.57" xyz="-0.00277 0.0  -0.00545" />
+
+	<!--origin rpy="0.1 0 1.57" xyz="0.0102 -0.01  -0.055" /-->
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/biotac/biotac_base.stl" />
+        </geometry>
+	        <material name="Green">
+            <color rgba="0.0 0.8 .0 1" />
+        </material>
+
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.01 0.01 0.025" />
+      </geometry>
+      <origin rpy="0 0.3 0" xyz="-0.0025 0 -0.009" />
+    </collision>
+    <inertial>
+        <mass value="0.021" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="9.68e-07" ixy="0" ixz="0" iyy="9.68e-07" iyz="0" izz="9.68e-07" />
+    </inertial>
+    </link>
+
+    <gazebo reference="middle_tip">
+        <material value="Gazebo/Green" />
+    </gazebo>
+    <joint name="middle_tip_joint" type="fixed">
+        <parent link="middle_link_3" />
+        <child link="middle_tip" />
+	<origin rpy="0 0 0" xyz="0.008 0.0 0.04" />
+    </joint>
+    
+    <link name="middle_biotac_origin"/>
+    <joint name="middle_tip_bt" type="fixed">
+      <origin rpy="${0.0 * pi} ${-0.38875 * pi} ${0.0 * pi}" xyz="0.0005 0.00155 0.0155"/>
+      <parent link="middle_tip"/>
+      <child link="middle_biotac_origin"/>
+    </joint>
+
+    <!-- [LINK 0, 4, 8] -->
+    <link name="ring_link_0">
+    <visual>
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_0.0.stl" />
+        </geometry>
+        <material name="Grey" />
+    </visual>
+    <collision>
+        <geometry>
+            <box size="0.0196 0.0275 0.0164" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0.0082" />
+    </collision>
+    <inertial>
+        <mass value="0.0119" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="1.01666658333e-06" ixy="0.0" ixz="0.0" iyy="6.47677333333e-07" iyz="0.0" izz="1.01666658333e-06" />
+    </inertial>
+    </link>
+    <gazebo reference="ring_link_0">
+        <material value="Gazebo/Grey" />
+    </gazebo>
+    <joint name="ring_joint_0" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit effort="15" lower="-0.65" upper="0.65" velocity="7" />
+        <parent link="palm_link" />
+        <child link="ring_link_0" />
+        <origin rpy="0.08726646255 0 0" xyz="0 -0.0435 -0.001542" />
+        <dynamics damping="1" friction="0" />
+    </joint>
+
+    <!-- [LINK 1, 5, 9] -->
+    <link name="ring_link_1">
+    <visual>
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_1.0.stl" />
+        </geometry>
+        <material name="Grey" />
+    </visual>
+    <collision>
+        <geometry>
+            <box size="0.0196 0.0275 0.054" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0.027" />
+    </collision>
+    <inertial>
+        <mass value="0.065" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="7.95654166667e-05" ixy="1.7199e-05" ixz="8.75875e-06" iyy="2.47088833333e-05" iyz="2.413125e-05" izz="7.95654166667e-05" />
+    </inertial>
+    </link>
+    <gazebo reference="ring_link_1">
+        <material value="Gazebo/Grey" />
+    </gazebo>
+    <joint name="ring_joint_1" type="revolute">
+        <limit effort="15" lower="-0.4" upper="1.8" velocity="7" />
+        <axis xyz="0 1 0" />
+        <parent link="ring_link_0" />
+        <child link="ring_link_1" />
+        <origin xyz="0 0 0.0164" />
+        <dynamics damping="1" friction="0" />
+    </joint>
+
+    <!-- [LINK 2, 6, 10]-->
+    <link name="ring_link_2">
+    <visual>
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_2.0.stl" />
+        </geometry>
+        <material name="Grey" />
+    </visual>
+    <collision>
+        <geometry>
+            <box size="0.0196 0.0275 0.0384" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0.0192" />
+    </collision>
+    <inertial>
+        <mass value="0.0355" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="2.63979183333e-05" ixy="6.67968e-06" ixz="4.783625e-06" iyy="1.34948516667e-05" iyz="9.372e-06" izz="2.63979183333e-05" />
+    </inertial>
+    </link>
+    <gazebo reference="ring_link_2">
+        <material value="Gazebo/Grey" />
+    </gazebo>
+    <joint name="ring_joint_2" type="revolute">
+        <axis xyz="0 1 0" />
+        <limit effort="15" lower="-0.4" upper="1.8" velocity="7" />
+        <parent link="ring_link_1" />
+        <child link="ring_link_2" />
+        <origin xyz="0 0 0.054" />
+        <dynamics damping="1" friction="0" />
+    </joint>
+
+    <!-- [LINK 3, 7, 11] -->
+    <link name="ring_link_3">
+    <visual>
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_3.0.stl" />
+        </geometry>
+        <material name="Grey" />
+    </visual>
+    <collision>
+        <geometry>
+            <box size="0.0196 0.0275 0.0267" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0.01335" />
+    </collision>
+    <inertial>
+        <mass value="0.0096" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="4.701248e-06" ixy="1.255968e-06" ixz="1.2936e-06" iyy="3.649312e-06" iyz="1.7622e-06" izz="4.701248e-06" />
+    </inertial>
+    </link>
+    <gazebo reference="ring_link_3">
+        <material value="Gazebo/Grey" />
+    </gazebo>
+    <joint name="ring_joint_3" type="revolute">
+        <axis xyz="0 1 0" />
+        <limit effort="15" lower="-0.4" upper="1.8" velocity="7" />
+        <parent link="ring_link_2" />
+        <child link="ring_link_3" />
+        <origin xyz="0 0 0.0384" />
+        <dynamics damping="10" friction="0" />
+    </joint>
+
+
+    <!-- [FINGER TIP] -->
+    <link name="ring_tip">
+      <visual>
+	<!--origin rpy="0.0 1.57 1.57" xyz="-0.015 -0.0  -0.04" /-->
+	<!--origin rpy="0.1 0 1.57" xyz="0.0102 -0.01  -0.055" /-->
+      <origin rpy="0.0 1.57 1.57" xyz="-0.00277 0.0  -0.00545" />
+
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/biotac/biotac_base.stl" />
+        </geometry>
+	<material name="Green">
+	  <color rgba="0.0 0.8 .0 1" />
+        </material>
+
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.01 0.01 0.025" />
+      </geometry>
+      <origin rpy="0 0.3 0" xyz="-0.0025 0 -0.009" />
+    </collision>
+    <inertial>
+        <mass value="0.021" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="9.68e-07" ixy="0" ixz="0" iyy="9.68e-07" iyz="0" izz="9.68e-07" />
+    </inertial>
+    </link>
+
+    <gazebo reference="ring_tip">
+        <material value="Gazebo/Green" />
+    </gazebo>
+    <joint name="ring_tip_joint" type="fixed">
+        <parent link="ring_link_3" />
+        <child link="ring_tip" />
+	<origin rpy="0 0 0" xyz="0.008 0.0 0.04" />
+    </joint>
+
+        <link name="ring_biotac_origin"/>
+    <joint name="ring_tip_bt" type="fixed">
+      <origin rpy="${0.0 * pi} ${-0.38875 * pi} ${0.0 * pi}" xyz="0.0005 0.00155 0.0155"/>
+      <parent link="ring_tip"/>
+      <child link="ring_biotac_origin"/>
+    </joint>
+
+    <!-- THUMB -->
+    <!-- [LINK 12] -->
+    <link name="thumb_link_0">
+    <visual>
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_12.0_right.stl" />
+        </geometry>
+        <material name="Grey">
+            <color rgba=".2 .2 .2 1" />
+        </material>
+    </visual>
+    <collision>
+        <geometry>
+            <box size="0.0358 0.034 0.0455" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="-0.0179 0.009 0.0145" />
+    </collision>
+    <inertial>
+        <mass value="0.0176" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="1.89273333333e-5" ixy="7.16716e-06" ixz="5.35568e-06" iyy="1.43008213333e-05" iyz="6.8068e-06" izz="1.89273333333e-05" />
+    </inertial>
+    </link>
+    <gazebo reference="thumb_link_0">
+        <material value="Gazebo/Grey" />
+    </gazebo>
+    <joint name="thumb_joint_0" type="revolute">
+        <axis xyz="-1 0 0" />
+        <limit effort="15" lower="0.363" upper="1.75" velocity="7" />
+        <parent link="palm_link" />
+        <child link="thumb_link_0" />
+	<!--origin rpy="0 -1.65806278845 -1.5707963259" xyz="-0.0182 0.035 -0.045987"/-->
+
+	<origin rpy="0 -1.65 -1.5" xyz="-0.0182 0.02 -0.045987"/>
+        <dynamics damping="1" friction="0" />
+    </joint>
+
+    <!-- [LINK 13] -->
+    <link name="thumb_link_1">
+    <visual>
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_13.0.stl" />
+        </geometry>
+        <material name="Grey">
+            <color rgba=".2 .2 .2 1" />
+        </material>
+    </visual>
+    <collision>
+        <geometry>
+            <box size="0.0196 0.0275 0.0177" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0.00885" />
+    </collision>
+    <inertial>
+        <mass value="0.0119" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="4.24250866667e-06" ixy="1.032087e-06" ixz="1.603525e-06" iyy="4.52362633333e-06" iyz="1.44808125e-06" izz="4.24250866667e-06" />
+    </inertial>
+    </link>
+    <gazebo reference="thumb_link_1">
+        <material value="Gazebo/Grey" />
+    </gazebo>
+    <joint name="thumb_joint_1" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit effort="15" lower="-0.45" upper="1.3" velocity="7" />
+        <parent link="thumb_link_0" />
+        <child link="thumb_link_1" />
+        <origin xyz="-0.027 0.005 0.0399" />
+        <dynamics damping="1" friction="0" />
+    </joint>
+
+    <!-- [LINK 14] -->
+    <link name="thumb_link_2">
+    <visual>
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_14.0.stl" />
+        </geometry>
+        <material name="Grey">
+        </material>
+    </visual>
+    <collision>
+        <geometry>
+            <box size="0.0196 0.0275 0.0514" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0.0257" />
+    </collision>
+    <inertial>
+        <mass value="0.038" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="4.30439933333e-05" ixy="9.57068e-06" ixz="5.1205e-06" iyy="1.44451933333e-05" iyz="1.342825e-05" izz="4.30439933333e-05" />
+    </inertial>
+    </link>
+    <gazebo reference="thumb_link_2">
+        <material value="Gazebo/Grey" />
+    </gazebo>
+    <joint name="thumb_joint_2" type="revolute">
+        <axis xyz="0 1 0" />
+        <limit effort="15" lower="-0.45" upper="1.75" velocity="7" />
+        <parent link="thumb_link_1" />
+        <child link="thumb_link_2" />
+        <origin xyz="0 0 0.0177" />
+        <dynamics damping="1" friction="0" />
+    </joint>
+
+    <!-- [LINK 15] -->
+    <link name="thumb_link_3">
+    <visual>
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/allegro/link_15.0.stl" />
+        </geometry>
+        <material name="Grey">
+        </material>
+    </visual>
+    <collision>
+        <geometry>
+            <box size="0.0196 0.0275 0.0423" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0.02115" />
+    </collision>
+    <inertial>
+        <mass value="0.0388" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="3.29223173333e-05" ixy="8.042076e-06" ixz="5.2283e-06" iyy="1.47493026667e-5" iyz="1.1283525e-5" izz="3.29223173333e-05" />
+    </inertial>
+    </link>
+    <gazebo reference="thumb_link_3">
+        <material value="Gazebo/Grey" />
+    </gazebo>
+    <joint name="thumb_joint_3" type="revolute">
+        <axis xyz="0 1 0" />
+        <limit effort="15" lower="-0.3" upper="1.98" velocity="7" />
+        <parent link="thumb_link_2" />
+        <child link="thumb_link_3" />
+        <origin xyz="0 0 0.0514" />
+        <dynamics damping="1" friction="0" />
+    </joint>
+
+    <!-- [FINGER TIP] -->
+    <link name="thumb_tip">
+      <visual>
+	<!--origin rpy="0.0 1.57 1.57" xyz="-0.00 -0.0  -0.04" /-->
+	<!--origin rpy="0.15 0.05 1.65" xyz="0.001 -0.012  -0.045" /-->
+	<origin rpy="0.0 1.57 1.57" xyz="-0.00277 0.0  -0.0015" />
+
+        <!--origin rpy="0.1 0 1.57" xyz="0.0102 -0.01  -0.055" /-->
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/biotac/biotac_base.stl" />
+        </geometry>
+        <material name="Green">
+            <color rgba="0.0 0.8 .0 1" />
+        </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.01 0.01 0.025" />
+      </geometry>
+      <origin rpy="0 0.3 0" xyz="-0.0025 0 -0.005" />
+
+    </collision>
+    <inertial>
+        <mass value="0.021" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="9.68e-07" ixy="0" ixz="0" iyy="9.68e-07" iyz="0" izz="9.68e-07" />
+    </inertial>
+    </link>
+    <gazebo reference="thumb_tip">
+        <material value="Gazebo/Green" />
+    </gazebo>
+    <joint name="thumb_tip_joint" type="fixed">
+        <parent link="thumb_link_3" />
+        <child link="thumb_tip" />
+        <origin rpy="0 0 0" xyz="0.008 0.0 0.052" />
+
+    </joint>
+
+    <link name="thumb_biotac_origin"/>
+    <joint name="thumb_tip_bt" type="fixed">
+      <origin rpy="${0.0 * pi} ${-0.38875 * pi} ${0.0 * pi}" xyz="0.0005 0.00155 0.0155"/>
+      <parent link="thumb_tip"/>
+      <child link="thumb_biotac_origin"/>
+    </joint>
+
+
+    <!-- ftip reachability meshes-->
+    <!--
+    <link name="thumb_tip_reach">
+      <visual>
+	<geometry>
+	  <mesh filename="package://ll4ma_robots_description/meshes/allegro/reachability/voxel_thumb_bt.stl" />
+	</geometry>
+        <color rgba="0.0 0.8 .0 0.1" />
+      </visual>
+    </link>
+    <joint name="thumb_reach" type="fixed">
+      <parent link="palm_link"/>
+      <child link="thumb_tip_reach"/>
+    </joint>
+
+    <link name="index_tip_reach">
+      <visual>
+	<geometry>
+	  <mesh filename="package://ll4ma_robots_description/meshes/allegro/reachability/voxel_index_bt.stl" />
+	</geometry>
+        <color rgba="0.0 0.8 .0 0.1" />
+      </visual>
+    </link>
+    <joint name="inde_reach" type="fixed">
+      <parent link="palm_link"/>
+      <child link="index_tip_reach"/>
+    </joint>
+
+    -->
+
+    <!-- ============================================================================= -->
+    <!-- THUMB MACRO -->
+    <!-- END THUMB MACRO -->
+    <!-- THREE FINGER MACRO -->
+    <!-- [[END]] THREE FINGER MACRO -->
+    <klampt package_root="../" use_vis_geom="1" freeze_root_link="1">
+        <link name="index_link_0" servoP="600" servoI="0" servoD="15" />
+        <link name="index_link_1" servoP="600" servoI="0" servoD="20" />
+        <link name="index_link_2" servoP="600" servoI="0" servoD="15" />
+        <link name="index_link_3" servoP="1000" servoI="0" servoD="15" />
+
+        <link name="middle_link_0" servoP="600" servoI="0" servoD="15" />
+        <link name="middle_link_1" servoP="600" servoI="0" servoD="20" />
+        <link name="middle_link_2" servoP="600" servoI="0" servoD="15" />
+        <link name="middle_link_3" servoP="1000" servoI="0" servoD="15" />
+
+        <link name="ring_link_0" servoP="600" servoI="0" servoD="15" />
+        <link name="ring_link_1" servoP="600" servoI="0" servoD="20" />
+        <link name="ring_link_2" servoP="600" servoI="0" servoD="15" />
+        <link name="ring_link_3" servoP="1000" servoI="0" servoD="15" />
+
+        <link name="thumb_link_0" servoP="1000" servoI="0" servoD="30" />
+        <link name="thumb_link_1" servoP="1000" servoI="0" servoD="20" />
+        <link name="thumb_link_2" servoP="1000" servoI="0" servoD="20" />
+        <link name="thumb_link_3" servoP="1000" servoI="0" servoD="15" />
+
+    </klampt>
+
+    <gazebo>
+    <plugin name="ft_sensor" filename="libgazebo_ros_ft_sensor.so">
+      <robotNamespace>ft_sensor</robotNamespace>
+      <jointName>gazebo_index_sensor_joint</jointName>
+      <topicName>index_force</topicName>
+      <updateRate>1000</updateRate>
+      <gaussianNoise>0.0001</gaussianNoise>
+    </plugin>
+  </gazebo>
+
+</robot>

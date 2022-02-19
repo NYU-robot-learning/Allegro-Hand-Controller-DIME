@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="allegro">
+
+  <xacro:arg name="gazebo" default="false" />
+  <xacro:arg name="control" default="false" />
+  <xacro:arg name="biotac" default="true" />
+
+  <!-- ========================================================================================= -->
+  <!-- removing control urdf for now -->
+  <!--xacro:if value="$(arg control)">
+    <xacro:include filename="$(find ll4ma_robots_description)/urdf/allegro_right/allegro_control.urdf.xacro"/>
+  </xacro:if>
+  <xacro:unless value="$(arg control)"-->
+
+  <!-- Load base joints -->
+  <xacro:include filename="$(find ll4ma_robots_description)/urdf/allegro_right/allegro_base.urdf.xacro"/>
+
+  <xacro:if value="$(arg biotac)">
+    <xacro:include filename="$(find ll4ma_robots_description)/urdf/allegro_right/biotac_tips.urdf.xacro"/>
+  </xacro:if>
+  <xacro:unless  value= "$(arg biotac)">
+    <xacro:include filename="$(find ll4ma_robots_description)/urdf/allegro_right/foam_tips.urdf.xacro"/>
+  </xacro:unless>
+  <!--/xacro:unless-->
+
+  <xacro:if value="$(arg gazebo)">
+    <xacro:include filename="$(find ll4ma_robots_description)/urdf/allegro_right/allegro.gazebo.xacro"/>
+  </xacro:if>
+  
+</robot>

@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:unless value="$(arg gazebo)">
+    <xacro:property name="push_stick_mount_mass" value="0.034"/>
+  </xacro:unless>
+  <xacro:if value="$(arg gazebo)">
+    <xacro:property name="push_stick_mount_mass" value="0.00001"/>
+  </xacro:if>
+  
+  <xacro:include filename="$(find ll4ma_robots_description)/urdf/xacro_macros/inertia_tensors.xacro"/>
+
+  <xacro:macro name="optoforce_push_stick_mount">
+    
+    <link name="optoforce_push_stick_mount_link">
+      <inertial>
+        <origin xyz="0 0 0.0" rpy="0 0 0"/>
+        <mass value="${push_stick_mount_mass}" />
+	<xacro:cylinder_inertia m="${push_stick_mount_mass}" r="0.0325" h="0.01"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0.0005" rpy="0 0 0"/>
+        <geometry>
+	  <mesh
+	      filename="package://ll4ma_robots_description/meshes/mounts/optoforce_push_stick_mount.STL"
+	      scale="0.001 0.001 0.001"/>
+        </geometry>
+	<material name="dark_grey">
+	  <color rgba="0.2 0.2 0.2 1"/>
+	</material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0.0055" rpy="0 0 0"/>
+        <geometry>
+	  <cylinder length="0.01" radius="0.035"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <gazebo reference="optoforce_push_stick_mount_link">
+      <material>Gazebo/Grey</material>
+    </gazebo>
+            
+  </xacro:macro>
+  
+</robot>

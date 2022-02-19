@@ -1,0 +1,69 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="optoforce_mass" value="0.199"/>
+  
+  <xacro:include filename="$(find ll4ma_robots_description)/urdf/xacro_macros/inertia_tensors.xacro"/>
+
+  <!-- Sensor casing model -->
+  <link name="optoforce_model_link">
+    <inertial>
+      <origin xyz="0.000272851 -0.000221116 0.016537231" rpy="0 0 0" />
+      <mass value="${optoforce_mass}" />
+      <xacro:unless value="$(arg gazebo)">
+	<xacro:cylinder_inertia m="${optoforce_mass}" r="0.033" h="0.035"/>
+      </xacro:unless>
+      <xacro:if value="$(arg gazebo)">
+	<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+      </xacro:if>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+	<mesh
+	    filename="package://ll4ma_robots_description/meshes/force_sensors/optoforce_sensor.stl"
+	    scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="Grey">
+	<color rgba="0.2 0.2 0.2 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.015" rpy="0 0 0" />
+      <geometry>
+	<cylinder length="0.04" radius="0.035"/>
+      </geometry>
+    </collision>
+  </link>
+  
+  <!-- The sensing part of the sensor, separate so it doesn't sense weight of sensor itself -->
+  <link name="optoforce_sensor_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.00001" />
+      <inertia ixx="1e-08" ixy="0.0" ixz="0.0" iyy="1e-08" iyz="0.0" izz="1e-08"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.0045" rpy="0 0 0" />
+      <geometry>
+        <cylinder length="0.001" radius="0.03"/>
+      </geometry>
+      <material name="">
+        <color rgba="1.0 0.0 0.0 0.1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.0045" rpy="0 0 0" />
+      <geometry>
+        <cylinder length="0.001" radius="0.03"/>
+      </geometry>
+    </collision>
+  </link>
+  
+  <joint name="optoforce_sensor_joint" type="fixed">
+    <origin xyz="0 0 0.0305" rpy="0 0 0.0" />
+    <parent link="optoforce_model_link" />
+    <child link="optoforce_sensor_link" />
+  </joint>
+    
+</robot>

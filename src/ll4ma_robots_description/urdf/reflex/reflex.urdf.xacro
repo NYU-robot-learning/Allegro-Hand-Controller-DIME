@@ -1,0 +1,413 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="reflex">
+
+  <xacro:arg name="actuate_reflex"             default="true"/>
+  <xacro:arg name="use_reflex_contact_sensors" default="false"/>
+  
+  <!-- Switch joint type for actuated joints depending on if they are being used for control -->
+  <xacro:if value="$(arg actuate_reflex)">
+    <xacro:property name="joint_type" value="revolute"/>
+  </xacro:if>
+  <xacro:unless value="$(arg actuate_reflex)">
+    <xacro:property name="joint_type" value="fixed"/>
+  </xacro:unless>
+
+  <xacro:property name="pi" value="3.14159265359" />
+  <xacro:property name="mesh_path" value="package://ll4ma_robots_description/meshes/reflex"/>
+  
+  <xacro:include filename="$(find ll4ma_robots_description)/urdf/xacro_macros/inertia_tensors.xacro"/>
+
+  
+  <!-- ======================================= Masses ======================================== -->
+  <!-- These are rough approximations, the total hand mass was measured to be about 0.9kg,     -->
+  <!-- most of it concentrated in the shell anyways, so for sake of arm controller, most mass  -->
+  <!-- is being given to shell/pad, treating fingers as almost massless, so that KDL chain for -->
+  <!-- arm can just go through the palm pad and be accounting for most of the hand mass.       -->
+
+  <xacro:property name="flex_link_mass"     value="0.01"/>
+  <xacro:property name="proximal_link_mass" value="0.01"/>
+  <xacro:property name="distal_link_mass"   value="0.01"/>
+  <xacro:property name="proximal_pad_mass"  value="0.01"/>
+  <xacro:property name="distal_pad_mass"    value="0.01"/>
+  <xacro:property name="swivel_link_mass"   value="0.01"/>
+  <xacro:property name="shell_mass"         value="0.74"/>
+  <xacro:property name="pad_mass"           value="0.1"/>
+
+  
+  <!-- ====================================== Link Macros ==================================== -->
+  
+  <xacro:macro name="flex_link" params="finger_id">
+    <link name="finger_${finger_id}_flex_link">
+      <visual>
+        <origin xyz="0.0005 0 -0.003" rpy="0 0 0"/>
+        <geometry>
+	  <box size="0.017 0.014 0.0065"/>
+        </geometry>
+	<material name="gold">
+	  <color rgba="${254/255} ${216/255} ${93/255} 1"/>
+	</material>
+      </visual>
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+	<mass value="${flex_link_mass}"/>
+	<xacro:cuboid_inertia m="${flex_link_mass}" x="0.005" y="0.014" z="0.015"/>
+      </inertial>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+  	<geometry>
+	  <box size="0.01 0.01 0.01"/>
+  	</geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+  
+  <xacro:macro name="proximal_link" params="finger_id">
+    <link name="proximal_${finger_id}">
+      <visual>
+	<origin xyz="-0.011 0.007 0.011" rpy="${pi} 0 0"/>
+	<geometry>
+          <mesh filename="${mesh_path}/proximal.stl"/>
+	</geometry>
+	<material name="black"/>
+      </visual>
+      <inertial>
+	<origin xyz="-0.011 0.007 0.011" rpy="${pi} 0 0"/>
+	<mass value="${proximal_link_mass}"/>
+	<xacro:cuboid_inertia m="${proximal_link_mass}" x="0.02" y="0.15" z="0.071"/>
+      </inertial>
+      <collision>
+	<origin xyz="-0.011 0.007 0.011" rpy="${pi} 0 0"/>
+	<geometry>
+	  <mesh filename="${mesh_path}/proximal_coll.stl"/>
+	</geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="distal_link" params="finger_id">
+    <link name="distal_${finger_id}">
+      <visual>
+	<origin xyz="-0.077 0.007 0.007" rpy="${pi} 0 0"/>
+	<geometry>
+          <mesh filename="${mesh_path}/distal.stl"/>
+	</geometry>
+	<material name="black"/>
+      </visual>
+      <inertial>
+	<origin xyz="-0.077 0.007 0.007" rpy="3.1459 0 0"/>
+	<mass value="${distal_link_mass}"/>
+	<xacro:cuboid_inertia m="${distal_link_mass}" x="0.017" y="0.15" z="0.039"/>
+      </inertial>
+      <collision>
+	<origin xyz="-0.077 0.007 0.007" rpy="${pi} 0 0"/>
+	<geometry>
+	  <mesh filename="${mesh_path}/distal_coll.stl"/>
+	</geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="proximal_pad" params="finger_id">
+    <link name="proximal_${finger_id}_pad">
+      <visual>
+	<origin xyz="-0.008 0.014 -0.002" rpy="${pi/2} ${pi/2} 0" />
+	<geometry>
+          <mesh filename="${mesh_path}/proximal_pad.stl"/>
+	</geometry>
+	<material name="dark_grey">
+	  <color rgba="0.2 0.2 0.2 1"/>
+	</material>
+      </visual>
+      <inertial>
+	<origin xyz="-0.008 0.014 -0.002" rpy="${pi/2} ${pi/2} 0"/>
+	<mass value="${proximal_pad_mass}"/>
+	<xacro:cuboid_inertia m="${proximal_pad_mass}" x="0.005" y="0.15" z="0.071"/>
+      </inertial>
+      <collision>
+	<origin xyz="-0.008 0.014 -0.002" rpy="${pi/2} ${pi/2} 0"/>
+	<geometry>
+	  <mesh filename="${mesh_path}/proximal_pad_coll.stl"/>
+	</geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="distal_pad" params="finger_id">
+    <link name="distal_${finger_id}_pad">
+      <visual>
+	<origin xyz="-0.00825 0.009 0.057" rpy="${pi/2} ${pi/2} 0"/>
+	<geometry>
+          <mesh filename="${mesh_path}/distal_pad.stl"/>
+	</geometry>
+	<material name="dark_grey">
+	  <color rgba="0.2 0.2 0.2 1"/>
+	</material>
+      </visual>
+      <inertial>
+	<origin xyz="-0.00825 0.009 0.057" rpy="${pi/2} ${pi/2} 0"/>
+	<mass value="${distal_pad_mass}"/>
+	<xacro:cuboid_inertia m="${distal_pad_mass}" x="0.005" y="0.15" z="0.039"/>
+      </inertial>
+      <collision>
+	<origin xyz="-0.00825 0.009 0.057" rpy="${pi/2} ${pi/2} 0"/>
+	<geometry>
+	  <mesh filename="${mesh_path}/distal_pad_coll.stl"/>
+	</geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="swivel_link" params="finger_id">
+    <link name="swivel_${finger_id}">
+      <visual>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<geometry>
+          <mesh filename="${mesh_path}/swivel_${finger_id}.stl"/>
+	</geometry>
+	<material name="black"/>
+      </visual>
+      <inertial>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<mass value="${swivel_link_mass}"/>
+	<xacro:cuboid_inertia m="${swivel_link_mass}" x="0.022" y="0.032" z="0.03"/>
+      </inertial>
+      <collision>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<geometry>
+	  <mesh filename="${mesh_path}/swivel_${finger_id}_coll.stl"/>
+	</geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="shell_link">
+    <link name="shell">
+      <visual>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<geometry>
+          <mesh filename="${mesh_path}/base_link.stl"/>
+	</geometry>
+	<material name="black"/>
+      </visual>
+      <inertial>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<mass value="${shell_mass}"/>
+	<xacro:cuboid_inertia m="${shell_mass}" x="0.066" y="0.091" z="0.136"/>
+      </inertial>
+      <collision>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<geometry>
+	  <mesh filename="${mesh_path}/base_link_coll.stl"/>
+	</geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="pad_link">
+    <link name="pad">
+      <visual>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<geometry>
+          <mesh filename="${mesh_path}/pad.stl"/>
+	</geometry>
+	<material name="dark_grey">
+	  <color rgba="0.2 0.2 0.2 1"/>
+	</material>
+      </visual>
+      <inertial>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<mass value="${pad_mass}"/>
+	<xacro:cuboid_inertia m="${pad_mass}" x="0.066" y="0.091" z="0.136"/>
+      </inertial>
+      <collision>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<geometry>
+	  <mesh filename="${mesh_path}/pad_coll.stl"/>
+	</geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+  <link name="palm_link" /> <!-- A dummy link to define the end-effector frame -->
+
+  
+  <!-- =================================== Tactile macros =================================== -->
+  <!-- Sensor links are rendered only to give a link that the Gazebo sensor plugin can latch  -->
+  <!-- onto. As such, the collision and inertia are bogus and the visual is defines an        -->
+  <!-- approximation of the sensor size. It's important that the mass and inertia are low     -->
+  <!-- enough not to interfere with the hand dynamics, but not so small that they physics     -->
+  <!-- engine chokes on it (e.g. 1e-8 is too small and the links disappear).                  -->
+  
+  <xacro:macro name="sensor_link" params="location finger_id sensor_id">
+    <link name="${location}_${finger_id}_sensor_${sensor_id}">
+      <visual>
+      	<origin xyz="0 0 0" rpy="0 0 0"/>
+      	<geometry>
+      	  <box size="0.006 0.006 0.0003"/>
+      	</geometry>
+      </visual>
+      <inertial>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<mass value="1e-5"/>
+	<xacro:cuboid_inertia m="1e-5" x="0.006" y="0.006" z="0.0003"/>
+      </inertial>
+      <collision>
+      	<origin xyz="0 0 0" rpy="0 0 0"/>
+      	<geometry>
+      	  <box size="0.006 0.006 0.0003"/>
+      	</geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="sensor_joint" params="location finger_id sensor_id">
+    <joint name="${location}_${finger_id}_to_sensor_${sensor_id}" type="fixed">
+      <xacro:if value="${location == 'proximal'}">
+	<xacro:property name="x_offset" value="0.012"/>
+	<xacro:property name="x_gap"    value="0.008"/>
+	<xacro:property name="z_offset" value="0.014"/>
+      </xacro:if>
+      <xacro:if value="${location == 'distal'}">
+	<xacro:property name="x_offset" value="0.008"/>
+	<xacro:property name="x_gap"    value="0.008"/>
+	<xacro:property name="z_offset" value="0.01"/>
+      </xacro:if>
+      <origin xyz="${x_offset + x_gap * sensor_id} 0 ${z_offset}" rpy="0 0 0"/>
+      <parent link="${location}_${finger_id}"/>
+      <child link="${location}_${finger_id}_sensor_${sensor_id}"/>
+    </joint>
+  </xacro:macro>
+  
+  <joint name="palm" type="fixed">
+    <origin xyz="0 0 0" rpy="3.14159265358979 0 1.5707963267949"/>
+    <parent link="pad" />
+    <child link="palm_link" />
+    <axis xyz="0 0 0"/>
+  </joint>
+
+  <!-- ===================================== Joint Macros ===================================== -->
+  
+  <xacro:macro name="distal_to_pad" params="finger_id">
+    <joint name="distal_${finger_id}_to_pad" type="fixed">
+      <origin xyz="-0.01 0 0.001" rpy="${pi/2} 0 -${pi/2}"/>
+      <parent link="distal_${finger_id}"/>
+      <child link="distal_${finger_id}_pad"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="proximal_to_pad" params="finger_id">
+    <joint name="proximal_${finger_id}_to_pad" type="fixed">
+      <origin xyz="0 0 0" rpy="${pi/2} 0 -${pi/2}"/>
+      <parent link="proximal_${finger_id}"/>
+      <child link="proximal_${finger_id}_pad"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="flex_to_distal" params="finger_id">
+    <joint name="flex_to_distal_${finger_id}" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="finger_${finger_id}_flex_link"/>
+      <child link="distal_${finger_id}"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="proximal_to_flex" params="finger_id">
+    <joint name="proximal_${finger_id}_to_flex" type="fixed">
+      <origin xyz="0.07 0 0.004" rpy="0 0 0"/>
+      <parent link="proximal_${finger_id}"/>
+      <child link="finger_${finger_id}_flex_link"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="shell_to_pad">
+    <joint name="shell_to_pad" type="fixed">
+      <origin xyz="0.02 0 0.063" rpy="${pi/2} 0 -${pi/2}"/>
+      <parent link="shell"/>
+      <child link="pad"/>
+      <axis xyz="0 0 0"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="preshape" params="finger_id">
+    <joint name="preshape_${finger_id}" type="${joint_type}">
+      <parent link="shell"/>
+      <child link="swivel_${finger_id}"/>
+      <limit effort="15" lower="0.0" upper="${pi/2}" velocity="7"/>
+      <xacro:if value="${finger_id == 1}">
+	<origin xyz="0.0503973683071414 -0.026 0.063" rpy="0 0 0"/>
+	<axis xyz="0 0 -1"/>
+      </xacro:if>
+      <xacro:if value="${finger_id == 2}">
+	<origin xyz="0.0503973683071413 0.026 0.063" rpy="0 0 0"/>
+	<axis xyz="0 0 1"/>
+      </xacro:if>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="proximal" params="finger_id">
+    <joint name="proximal_joint_${finger_id}" type="${joint_type}">
+      <child link="proximal_${finger_id}"/>
+      <axis xyz="0 -1 0"/>
+      <limit effort="15" lower="0.0" upper="${pi}" velocity="7"/>
+      <xacro:if value="${finger_id == 3}">
+	<origin xyz="-0.03 0 0.0816" rpy="0 0.28 ${pi}"/>
+	<parent link="shell"/>
+      </xacro:if>
+      <xacro:unless value="${finger_id == 3}">
+	<origin xyz="0.01 0 0.0186" rpy="0 0.28 0"/>
+	<parent link="swivel_${finger_id}"/>
+      </xacro:unless>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="finger" params="id">
+    <xacro:unless value="${id == 3}">
+      <xacro:preshape    finger_id="${id}"/>
+      <xacro:swivel_link finger_id="${id}"/>
+    </xacro:unless>
+    <xacro:proximal         finger_id="${id}"/>
+    <xacro:proximal_link    finger_id="${id}"/>
+    <xacro:proximal_to_pad  finger_id="${id}"/>
+    <xacro:proximal_pad     finger_id="${id}"/>
+    <xacro:proximal_to_flex finger_id="${id}"/>
+    <xacro:flex_link        finger_id="${id}"/>
+    <xacro:flex_to_distal   finger_id="${id}"/>
+    <xacro:distal_link      finger_id="${id}"/>
+    <xacro:distal_to_pad    finger_id="${id}"/>
+    <xacro:distal_pad       finger_id="${id}"/>
+
+    <xacro:if value="$(arg use_reflex_contact_sensors)">
+      <xacro:sensor_link  location="proximal" finger_id="${id}" sensor_id="1"/>
+      <xacro:sensor_joint location="proximal" finger_id="${id}" sensor_id="1"/>
+      <xacro:sensor_link  location="proximal" finger_id="${id}" sensor_id="2"/>
+      <xacro:sensor_joint location="proximal" finger_id="${id}" sensor_id="2"/>
+      <xacro:sensor_link  location="proximal" finger_id="${id}" sensor_id="3"/>
+      <xacro:sensor_joint location="proximal" finger_id="${id}" sensor_id="3"/>
+      <xacro:sensor_link  location="proximal" finger_id="${id}" sensor_id="4"/>
+      <xacro:sensor_joint location="proximal" finger_id="${id}" sensor_id="4"/>
+      <xacro:sensor_link  location="proximal" finger_id="${id}" sensor_id="5"/>
+      <xacro:sensor_joint location="proximal" finger_id="${id}" sensor_id="5"/>
+      <xacro:sensor_link  location="distal"   finger_id="${id}" sensor_id="1"/>
+      <xacro:sensor_joint location="distal"   finger_id="${id}" sensor_id="1"/>
+      <xacro:sensor_link  location="distal"   finger_id="${id}" sensor_id="2"/>
+      <xacro:sensor_joint location="distal"   finger_id="${id}" sensor_id="2"/>
+      <xacro:sensor_link  location="distal"   finger_id="${id}" sensor_id="3"/>
+      <xacro:sensor_joint location="distal"   finger_id="${id}" sensor_id="3"/>
+      <xacro:sensor_link  location="distal"   finger_id="${id}" sensor_id="4"/>
+      <xacro:sensor_joint location="distal"   finger_id="${id}" sensor_id="4"/>
+    </xacro:if>
+  </xacro:macro>
+
+  
+  <!-- =============================================================================== -->
+
+  <!-- The preceding macros are used here to actually construct the kinematic structure-->
+  
+  <xacro:shell_link/>
+  <xacro:pad_link/>
+  <xacro:shell_to_pad/>
+
+  <xacro:finger id="1"/>
+  <xacro:finger id="2"/>
+  <xacro:finger id="3"/>  
+  
+</robot>

@@ -1,0 +1,163 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="biotac" params="mount_link parent">
+
+    <link name="${parent}_tip">
+      <visual>
+	<!--origin rpy="0.1 0 1.57" xyz="0.0102 -0.01  -0.055" /-->
+      <origin rpy="0.0 1.57 1.57" xyz="-0.00277 0.0  -0.00545" />
+      <geometry>
+        <mesh filename="package://ll4ma_robots_description/meshes/biotac/base_visual.stl" />
+      </geometry>
+      <material name="Grey">
+        <color rgba="0.2 0.2 0.2 1" />
+      </material>
+
+    </visual>
+    <collision>
+      <origin rpy="0.0 1.57 1.57" xyz="-0.00277 0.0  -0.00545" />
+
+      <geometry>
+        <mesh filename="package://ll4ma_robots_description/meshes/biotac/base_collision.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+        <mass value="0.021" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="9.68e-07" ixy="0" ixz="0" iyy="9.68e-07" iyz="0" izz="9.68e-07" />
+    </inertial>
+    </link>
+
+    <joint name="${parent}_tip_joint" type="fixed">
+        <parent link="${mount_link}" />
+        <child link="${parent}_tip" />
+        <origin rpy="0 0 0" xyz="0.008 0.0 0.04" />
+    </joint>
+
+    <link name="${parent}_biotac_nail">
+       <visual>
+	<origin rpy="0 0 0.0" xyz="0.00 -0.00  -0.0" />
+        <geometry>
+          <mesh filename="package://ll4ma_robots_description/meshes/biotac/nail_visual.stl" />
+        </geometry>
+        <material name="White">
+          <color rgba="1 1 1 1" />
+        </material>
+      </visual>
+      <collision>
+	<origin rpy="0 0 0.0" xyz="0.00 -0.00  -0.0" />
+        <geometry>
+          <mesh filename="package://ll4ma_robots_description/meshes/biotac/nail_collision.stl" />
+        </geometry>
+        <material name="White">
+          <color rgba="1.0 1.0 1.0 1" />
+        </material>
+      </collision>
+          <inertial>
+	  
+      <mass value="0.00001"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="9.68e-07" ixy="0" ixz="0" iyy="9.68e-07" iyz="0" izz="9.68e-07"/>
+    </inertial>
+
+    </link>
+    <joint name="${parent}_biotac_nail_joint" type="fixed">
+      <origin rpy="-1.57 1.57 0" xyz="-0.0022 0.0 -0.0055"/>
+      <!--axis xyz="0 0 1"/-->
+      <parent link="${parent}_tip"/>
+      <child link="${parent}_biotac_nail"/>
+    </joint>
+    
+    <link name="${parent}_biotac_tip">
+      <visual>
+	<origin rpy="1.57 0.351 3.141" xyz="-0.021 -0.002  -0.004" />
+        <geometry>
+          <mesh filename="package://ll4ma_robots_description/meshes/biotac/contact_visual.stl" />
+        </geometry>
+        <material name="Green">
+          <color rgba="0.0 0.8 .0 1" />
+        </material>
+      </visual>
+      <collision>
+	<origin rpy="1.57 0.351 3.141" xyz="-0.021 -0.002  -0.004" />
+        <geometry>
+          <mesh filename="package://ll4ma_robots_description/meshes/biotac/contact_collision_small.stl" />
+        </geometry>
+        <material name="Green">
+          <color rgba="0.0 0.8 .0 1" />
+        </material>
+    </collision>
+    <inertial>
+        <mass value="0.00001" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="9.68e-07" ixy="0" ixz="0" iyy="9.68e-07" iyz="0" izz="9.68e-07" />
+    </inertial>
+
+    </link>
+  <joint name="${parent}_biotac_joint" type="fixed">
+    <origin rpy="1.57  0. -2.791" xyz="-0.021 -0.003 0.002"/>
+    <!--axis xyz="0 0 1"/-->
+    <parent link="${parent}_biotac_nail"/>
+    <child link="${parent}_biotac_tip"/>
+  </joint>
+    
+  <link name="${parent}_biotac_origin">
+    <inertial>
+	  
+      <mass value="0.00001"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="9.68e-07" ixy="0" ixz="0" iyy="9.68e-07" iyz="0" izz="9.68e-07"/>
+    </inertial>
+
+  </link>
+    <joint name="${parent}_tip_bt" type="fixed">
+      <origin rpy="${0.0 * pi} ${-0.38875 * pi} ${0.0 * pi}" xyz="0.0005 0.00155 0.0155"/>
+      <!--origin rpy="${0.0 * pi} ${-0.38875 * pi} ${0.0 * pi}" xyz="0.0005 0.00155 0.0155"/-->
+	    
+      <parent link="${parent}_tip"/>
+      <child link="${parent}_biotac_origin"/>
+    </joint>
+   
+  <!-- virtual link on surface of the biotac -->
+ 
+    <link name="${parent}_biotac_surface">
+    <!--  <visual>
+	<origin rpy="1.57 0.351 3.141" xyz="-0.021 -0.002  -0.004" />
+        <geometry>
+          <mesh filename="package://ll4ma_robots_description/meshes/biotac/contact_visual.stl" />
+        </geometry>
+        <material name="Green">
+          <color rgba="0.0 0.8 .0 1" />
+        </material>
+      </visual>
+      <collision>
+	<origin rpy="1.57 0.351 3.141" xyz="-0.021 -0.002  -0.004" />
+        <geometry>
+          <mesh filename="package://ll4ma_robots_description/meshes/biotac/contact_collision_small.stl" />
+        </geometry>
+        <material name="Green">
+          <color rgba="0.0 0.8 .0 1" />
+        </material>
+    </collision>
+    <inertial>
+        <mass value="0.00001" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="9.68e-07" ixy="0" ixz="0" iyy="9.68e-07" iyz="0" izz="9.68e-07" />
+    </inertial>
+    -->
+    </link>
+
+  <joint name="${parent}_biotac_surface_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="-0.005 0 -0.006"/>
+    <parent link="${parent}_biotac_tip"/>
+    <child link="${parent}_biotac_surface"/>
+  </joint>
+
+ <!-- gazebo -->
+
+    <xacro:if value="$(arg gazebo)">
+      <xacro:include filename="${urdf_path}/biotac/biotac.gazebo.xacro">
+      </xacro:include>
+    </xacro:if>
+  </xacro:macro>
+</robot>

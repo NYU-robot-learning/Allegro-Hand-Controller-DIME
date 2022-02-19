@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="phantom_omni" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  
+  <!-- ===================================== Materials ===================================== -->
+  
+  <material name="metal_seamed">
+    <color rgba="0.4627450980392157 0.4666666666666667 0.4509803921568628 1.0" />
+  </material>
+
+  <material name="blue">
+    <color rgba="0.0 0.0 0.8 1.0" />
+  </material>
+
+  <material name="white">
+    <color rgba="1.0 1.0 1.0 1.0" />
+  </material>
+  
+  <!-- ======================================= Links ======================================= -->
+
+  <link name="world"/>
+  
+  <link name="omni_base" >
+    <visual>
+      <origin xyz="0 0 0" />
+      <geometry>
+	<mesh filename="package://ll4ma_robots_description/meshes/phantom_omni/base.stl" />
+      </geometry>
+      <material name="metal_seamed"/>
+    </visual>
+  </link>
+
+  <link name="torso" >
+    <visual>
+      <origin xyz="0 0 0.036" rpy="0 0 0"/>
+      <geometry>
+	<mesh filename="package://ll4ma_robots_description/meshes/phantom_omni/torso.stl" />
+      </geometry>
+      <material name="blue"/>
+    </visual>
+  </link>
+
+  <link name="upper_arm" >
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	<mesh filename="package://ll4ma_robots_description/meshes/phantom_omni/upper_arm.stl" />
+      </geometry>
+      <material name="metal_seamed" />
+    </visual>
+  </link>
+
+  <link name="lower_arm" >
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	<mesh filename="package://ll4ma_robots_description/meshes/phantom_omni/lower_arm.stl" />
+      </geometry>
+      <material name="metal_seamed" />
+    </visual>
+  </link>
+
+  <link name="wrist" >
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	<mesh filename="package://ll4ma_robots_description/meshes/phantom_omni/wrist.stl" />
+      </geometry>
+      <material name="metal_seamed" />
+    </visual>
+  </link>
+
+  <link name="tip" >
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	<mesh filename="package://ll4ma_robots_description/meshes/phantom_omni/tip.stl" />
+      </geometry>
+      <material name="metal_seamed" />
+    </visual>
+  </link>
+
+  <link name="stylus" >
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	<mesh filename="package://ll4ma_robots_description/meshes/phantom_omni/pen.stl" />
+      </geometry>
+      <material name="blue" />
+    </visual>
+  </link>
+
+  <!-- Adding a dummy link to have full control over endpoint orienation -->
+  <link name="endpoint"/>
+
+
+
+  
+  <!-- ======================================= Joints ======================================= -->
+
+  <joint name="world_to_base" type="fixed">
+    <parent link="world"/>
+    <child link="omni_base"/>
+    <origin xyz="0 0 0" rpy="0 0 3.14"/>
+  </joint>
+  
+  <joint name="waist" type="revolute" >
+    <parent link="omni_base" />
+    <child link="torso" />
+    <origin xyz="0 0 0.09" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-0.98" upper="0.98" velocity="100" effort="5" />
+  </joint>
+
+  <joint name="shoulder" type="revolute" >
+    <parent link="torso" />
+    <child link="upper_arm" />
+    <origin xyz="0 -0.001 0.036" rpy="0 0 1.57" />
+    <axis xyz="1 0 0" />
+    <limit lower="0" upper="1.75" velocity="100" effort="5" />
+  </joint>
+
+  <joint name="elbow" type="revolute" >
+    <parent link="upper_arm" />
+    <child link="lower_arm" />
+    <origin xyz="0.0075 0.13355 0" rpy="0 0 0" />
+    <axis xyz="1 0 0" />
+    <!-- upper="1.25" -->
+    <limit lower="-0.81" upper="1.25" velocity="100" effort="5" /> 
+  </joint>
+
+  <joint name="yaw" type="revolute" >
+    <parent link="lower_arm" />
+    <child link="wrist" />
+    <origin xyz="0 0 -0.08" rpy="1.57 0 0"/>
+    <axis xyz="0 -1 0" />
+    <limit lower="3.92" upper="8.83" velocity="100" effort="5" />
+  </joint>
+
+  <joint name="pitch" type="revolute" >
+    <parent link="wrist" />
+    <child link="tip" />
+    <origin xyz="0 -0.053 0" rpy="2.1 0 0" />
+    <axis xyz="1 0 0" />
+    <limit lower="-0.5" upper="1.75" velocity="100" effort="5" />
+  </joint>
+
+  <joint name="roll" type="revolute" >
+    <parent link="tip" />
+    <child link="stylus" />
+    <origin xyz="0 0 0.01" rpy="3.14 0 -1.57" />
+    <axis xyz="0 0 -1" />
+    <limit lower="-2.58" upper="2.58" velocity="100" effort="5" />
+  </joint>
+
+  <!-- Dummy joint for control over endpoint orientation -->
+  <joint name="endpoint_joint" type="fixed">
+    <parent link="stylus"/>
+    <child link="endpoint"/>
+    <origin xyz="0 0 0" rpy="1.5707 3.14159 0"/>
+  </joint>
+  
+</robot>

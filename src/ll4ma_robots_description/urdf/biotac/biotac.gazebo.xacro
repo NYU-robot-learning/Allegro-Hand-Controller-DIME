@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <gazebo reference="${parent}_tip">
+    <material value="Gazebo/Grey" />
+  </gazebo>
+  
+  <!--gazebo reference="${parent}_tip_joint">
+    <disableFixedJointLumping>true</disableFixedJointLumping>
+  </gazebo>
+  <gazebo reference="${parent}_biotac_nail_joint">
+    <disableFixedJointLumping>true</disableFixedJointLumping>
+  </gazebo-->
+
+  <gazebo reference="${parent}_biotac_joint">
+    <provideFeedback>true</provideFeedback>
+    <disableFixedJointLumping>true</disableFixedJointLumping>
+  </gazebo>
+
+  <gazebo reference="${parent}_biotac_tip">
+    <gravity>false</gravity>
+    <material>Gazebo/Green</material>
+    <mu1>0.8</mu1>
+    <mu2>0.8</mu2> 
+  </gazebo>
+
+  <!--gazebo reference="${parent}_tip_bt">
+    <disableFixedJointLumping>true</disableFixedJointLumping>
+  </gazebo-->
+  
+
+  <gazebo>
+    <plugin name="${parent}_bt_sensor" filename="libgazebo_ros_ft_sensor.so">
+      <robotNamespace>${parent}_biotac_sensor</robotNamespace>
+      <jointName>${parent}_biotac_joint</jointName>
+      <frame>child</frame>
+      <topicName>force</topicName>
+      <updateRate>100</updateRate>
+      <gaussianNoise>0.000</gaussianNoise>
+
+    </plugin>
+  </gazebo>
+</robot>	

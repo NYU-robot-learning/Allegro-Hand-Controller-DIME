@@ -1,0 +1,208 @@
+<?xml version="1.0" ?>
+<robot name="baxter" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="left_reflex"     default="false"/>
+  <xacro:arg name="left_gripper"    default="false"/>
+  <xacro:arg name="left_ft_sensor"  default="false"/>
+  <xacro:arg name="left_push_stick" default="false"/>
+  
+  <xacro:arg name="right_reflex"     default="false"/>
+  <xacro:arg name="right_gripper"    default="false"/>
+  <xacro:arg name="right_ft_sensor"  default="false"/>
+  <xacro:arg name="right_push_stick" default="false"/>
+
+  <xacro:arg name="baxter_sensors" default="false"/>
+
+  <xacro:arg name="gazebo"         default="true"/>
+  <xacro:arg name="use_sim_force"  default="true"/>
+  
+  <!-- ======================================================================================== -->
+
+  <!-- Baxter robot -->
+  <xacro:include filename="$(find ll4ma_robots_description)/urdf/baxter/baxter.urdf.xacro"/>
+
+
+  <!-- Baxter grippers -->
+  <xacro:if value="$(arg left_gripper)">
+    <include filename="$(find ll4ma_robots_description)/urdf/baxter/baxter_left_gripper.xacro"/>
+  </xacro:if>
+  <xacro:if value="$(arg right_gripper)">
+    <include filename="$(find ll4ma_robots_description)/urdf/baxter/baxter_right_gripper.xacro"/>
+  </xacro:if>
+
+  
+  <!-- Reflex hand -->
+  <xacro:if value="$(arg left_reflex)">
+    <!-- Hand  -->
+    <xacro:include filename="$(find ll4ma_robots_description)/urdf/reflex/reflex.urdf.xacro"/>
+    <!-- Mount -->
+    <xacro:include
+	filename="$(find ll4ma_robots_description)/urdf/mounts/baxter_reflex_mount.urdf.xacro">
+      <xacro:arg name="left_reflex"  value="true"/>
+      <xacro:arg name="right_reflex" value="false"/>
+    </xacro:include>
+  </xacro:if>
+  <xacro:if value="$(arg right_reflex)">
+    <!-- Hand  -->
+    <xacro:include filename="$(find ll4ma_robots_description)/urdf/reflex/reflex.urdf.xacro"/>
+    <!-- Mount -->
+    <xacro:include
+	filename="$(find ll4ma_robots_description)/urdf/mounts/baxter_reflex_mount.urdf.xacro">
+      <xacro:arg name="left_reflex"  value="false"/>
+      <xacro:arg name="right_reflex" value="true"/>
+    </xacro:include>
+  </xacro:if>
+
+  
+  <!-- Optoforce force sensor -->
+  <xacro:if value="$(arg left_ft_sensor)">
+    <xacro:include
+  	filename="$(find ll4ma_robots_description)/urdf/force_sensors/optoforce_sensor.urdf.xacro"/>
+    <xacro:include
+	filename="$(find ll4ma_robots_description)/urdf/mounts/baxter_optoforce_mount.urdf.xacro"/>
+      
+    <xacro:baxter_optoforce_mount/>
+      
+    <joint name="baxter_to_optoforce_mount" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="left_hand" />
+      <child link="baxter_optoforce_mount_link" />
+    </joint>
+    
+    <joint name="optoforce_mount_to_optoforce" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 ${pi}" />
+      <parent link="baxter_optoforce_mount_link" />
+      <child link="optoforce_model_link" />
+    </joint>
+    
+  </xacro:if>
+
+  <xacro:if value="$(arg right_ft_sensor)">
+    <xacro:include
+  	filename="$(find ll4ma_robots_description)/urdf/force_sensors/optoforce_sensor.urdf.xacro"/>
+    <xacro:include
+	filename="$(find ll4ma_robots_description)/urdf/mounts/baxter_optoforce_mount.urdf.xacro"/>
+      
+    <xacro:baxter_optoforce_mount/>
+      
+    <joint name="baxter_to_optoforce_mount" type="fixed">
+      <origin xyz="-0.013 0 0" rpy="0 0 -${pi/2}" />
+      <parent link="right_hand" />
+      <child link="baxter_optoforce_mount_link" />
+    </joint>
+    
+    <joint name="optoforce_mount_to_optoforce" type="fixed">
+      <origin xyz="0 0 0.01" rpy="0 0 ${-0.825 + pi}" />
+      <parent link="baxter_optoforce_mount_link" />
+      <child link="optoforce_model_link" />
+    </joint>
+    
+  </xacro:if>
+  
+
+  <!-- Push stick -->
+  <xacro:if value="$(arg left_push_stick)">
+    <xacro:include
+	filename="$(find ll4ma_robots_description)/urdf/end_effectors/push_stick.urdf.xacro"/>
+
+    <xacro:unless value="$(arg left_ft_sensor)">
+      <xacro:include
+	  filename="$(find ll4ma_robots_description)/urdf/mounts/baxter_push_stick_mount.urdf.xacro"/>
+
+      <xacro:baxter_push_stick_mount/>
+      <xacro:push_stick/>
+
+      <joint name="baxter_mount_to_push_stick" type="fixed">
+	<origin xyz="-0.0837 -0.028 -0.0685" rpy="0 0.6 0" />
+	<parent link="baxter_push_stick_mount_link" />
+	<child link="push_stick_link" />
+      </joint>
+
+    </xacro:unless>
+
+    <xacro:if value="$(arg left_ft_sensor)">
+      <xacro:include
+	  filename="$(find ll4ma_robots_description)/urdf/mounts/optoforce_push_stick_mount.urdf.xacro"/>
+      <xacro:optoforce_push_stick_mount/>
+      <xacro:push_stick/>
+      
+      <!-- <joint name="optoforce_to_push_stick_mount" type="fixed"> -->
+      <!-- 	<origin xyz="0 0 0.015" rpy="0 0 0" /> -->
+      <!-- 	<parent link="optoforce_sensor_link" /> -->
+      <!-- 	<child link="optoforce_push_stick_mount_link" /> -->
+      <!-- </joint> -->
+
+      <joint name="optoforce_to_push_stick_mount" type="fixed">
+      	<origin xyz="0 0 0.015" rpy="0 0 0" />
+      	<parent link="optoforce_model_link" />
+      	<child link="optoforce_push_stick_mount_link" />
+      </joint>
+
+      <joint name="optoforce_mount_to_push_stick" type="fixed">
+	<origin xyz="0 0 0.0051" rpy="${pi/2} 0 0" />
+	<parent link="optoforce_push_stick_mount_link" />
+	<child link="push_stick_link" />
+      </joint>
+
+    </xacro:if>
+  </xacro:if>
+
+  <xacro:if value="$(arg right_push_stick)">
+    <xacro:include
+	filename="$(find ll4ma_robots_description)/urdf/end_effectors/push_stick.urdf.xacro"/>
+
+    <xacro:unless value="$(arg right_ft_sensor)">
+      <xacro:include
+	  filename="$(find ll4ma_robots_description)/urdf/mounts/baxter_push_stick_mount.urdf.xacro"/>
+
+      <xacro:baxter_push_stick_mount/>
+      <xacro:push_stick/>
+
+      <joint name="baxter_mount_to_push_stick" type="fixed">
+	<origin xyz="-0.0837 -0.028 -0.0685" rpy="0 0.6 0" />
+	<parent link="baxter_push_stick_mount_link" />
+	<child link="push_stick_link" />
+      </joint>
+
+    </xacro:unless>
+
+    <xacro:if value="$(arg right_ft_sensor)">
+      <xacro:include
+	  filename="$(find ll4ma_robots_description)/urdf/mounts/optoforce_push_stick_mount.urdf.xacro"/>
+      <xacro:optoforce_push_stick_mount/>
+      <xacro:push_stick/>
+      
+      <!-- <joint name="optoforce_to_push_stick_mount" type="fixed"> -->
+      <!-- 	<origin xyz="0 0 0.015" rpy="0 0 0" /> -->
+      <!-- 	<parent link="optoforce_sensor_link" /> -->
+      <!-- 	<child link="optoforce_push_stick_mount_link" /> -->
+      <!-- </joint> -->
+
+      <joint name="optoforce_to_push_stick_mount" type="fixed">
+      	<origin xyz="0 0 0.035" rpy="0 0 0" />
+      	<parent link="optoforce_model_link" />
+      	<child link="optoforce_push_stick_mount_link" />
+      </joint>
+      
+      <joint name="optoforce_mount_to_push_stick" type="fixed">
+	<origin xyz="0 0 0.01" rpy="0 0 0" />
+	<parent link="optoforce_push_stick_mount_link" />
+	<child link="push_stick_link" />
+      </joint>
+
+    </xacro:if>
+  </xacro:if>
+
+  
+  <!-- Gazebo -->
+  <xacro:if value="$(arg gazebo)">
+    <xacro:include filename="$(find ll4ma_robots_description)/urdf/baxter/baxter.gazebo.xacro">
+      <xacro:arg name="ft_sensor"      value="$(arg ft_sensor)"/>
+      <xacro:arg name="use_sim_force"  value="$(arg use_sim_force)"/>
+      <xacro:arg name="left_gripper"   value="$(arg left_gripper)"/>
+      <xacro:arg name="right_gripper"  value="$(arg right_gripper)"/>
+      <xacro:arg name="baxter_sensors" value="$(arg baxter_sensors)"/>
+    </xacro:include>
+  </xacro:if>
+
+</robot>

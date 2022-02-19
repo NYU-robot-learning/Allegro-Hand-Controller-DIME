@@ -1,0 +1,33 @@
+#+Title: Kinematic and Dynamic solvers for robotic manipulators
+#+Author: LL4MA Lab, University of Utah
+* Contributors:
++ Balakumar Sundaralingam
++ Hunter Brown
++ Adam Conkey
+* Avoid the following:
++ Do not use vector<double> to store joint configurations as KDL requires Eigen::VectorXd as the type and this will lead to typecasting. The old code was rewritten to avoid this exact issue.
+* How do I use it?
+Look at this file ~src/kdl_test_node.cpp~ to see an example. Use this code in your own repo by linking to this package.
+
+Two types of KDL objects can be created:
++ manipulator: single base, single end-effector.
++ robot: multiple base, multiple end-effector
+* Current implementation:
+** KDL:
+The standard kinematics and dynamics library (KDL) which is also a part of OROCOS allowing for realtime controllers.
+*** Tree:
+The main component of KDL is building a kdl tree. This can be done in two ways- loading a urdf file or reading the robot description from the ros parameter server. We load it from a urdf file.
+*** Kinematics:
+The forward kinematics and Jacobian can be obtained using the following functions:
+*** Dynamics:
+KDL has functions to compute the matrices which are part of the inverse dynamics controller, namely- inertia(H), coriollis(V) and gravity(G). These matrices can be used to compute joint torques required to compensate for the robot's dynamics. 
+
+* Dev notes:
+** TODO Cleanup list:
++ Template for eigen/std vectors, need to come up with a custom struct?.
++ shared ptr instead of pointer in initialization. 
++ benchmarking
+* Future work:
+** Integrations:
+- DART library 
+- TRAC IK

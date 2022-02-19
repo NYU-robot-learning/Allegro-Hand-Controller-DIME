@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    
+  <xacro:unless value="$(arg gazebo)">
+    <xacro:property name="biotac_mount_mass" value="0.164"/>
+  </xacro:unless>
+  <xacro:if value="$(arg gazebo)">
+    <xacro:property name="biotac_mount_mass" value="0.00001"/>
+  </xacro:if>  
+  
+  <xacro:include filename="$(find ll4ma_robots_description)/urdf/xacro_macros/inertia_tensors.xacro"/>
+  <xacro:include filename="$(find ll4ma_robots_description)/urdf/biotac/biotac.urdf.xacro"/>
+
+
+  <xacro:macro name="biotac_mount">
+        
+    <link name="biotac_mount_link">
+      <inertial>
+        <origin xyz="0 0 0.005" rpy="0 0 0"/>
+        <mass value="${biotac_mount_mass}" />
+	<xacro:cylinder_inertia m="${biotac_mount_mass}" r="0.0325" h="0.01"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+	  <mesh
+	      filename="package://ll4ma_robots_description/meshes/mounts/biotac_mount.stl"
+	      scale="0.001 0.001 0.001"/>
+        </geometry>
+	<material name="dark_grey">
+	  <color rgba="0.2 0.2 0.2 1"/>
+	</material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0.005" rpy="0 0 0"/>
+        <geometry>
+	  <cylinder length="0.01" radius="0.035"/>
+        </geometry>
+      </collision>
+    </link>
+
+
+  </xacro:macro>
+
+  <xacro:biotac/>
+  <joint name="bt_mount_base" type="fixed">
+    <origin xyz="0.0 -0.005 0.05" rpy="0 0.0 -1.57"/>
+    <parent link="biotac_mount_link"/>    
+    <child link="bt_base" />
+  </joint>
+  
+    
+</robot>

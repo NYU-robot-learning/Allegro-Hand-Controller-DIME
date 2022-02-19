@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="sphere_ee" params="parent">
+
+    <link name="sphere_link">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <mass value="0.001" />
+        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <sphere radius="0.05"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <sphere radius="0.05"/>
+        </geometry>
+      </collision>
+    </link>
+    
+    <joint name="end_to_sphere" type="fixed">
+      <origin xyz="0 0 0.03" rpy="0 0 0" />
+      <parent link="${parent}" />
+      <child link="sphere_link" />
+    </joint>
+        
+  </xacro:macro>
+
+  <gazebo reference="sphere_link">
+    <material>Gazebo/Yellow</material>
+  </gazebo>
+
+</robot>

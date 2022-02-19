@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="jsp"       default="true"/>
+  <arg name="jsp_gui"   default="false"/>
+  <arg name="omni_name" default="phantom"/>
+
+  <!-- ======================================================================================== -->
+  
+  <node pkg="rviz" type="rviz" output="screen" name="rviz" 
+	args="-d $(find ll4ma_robots_description)/config/omni.rviz" />
+
+  <param name="robot_description"
+	 command="$(find xacro)/xacro
+		  '$(find ll4ma_robots_description)/urdf/phantom_omni/omni.urdf.xacro'
+		  --inorder"/>
+        
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+    <remap from="/joint_states" to="/$(arg omni_name)/joint_states" />
+  </node>
+
+  <group if="$(arg jsp)">
+    <node pkg="joint_state_publisher" type="joint_state_publisher" output="screen"
+          name="joint_state_publisher">
+      <param name="use_gui" value="$(arg jsp_gui)"/>
+      <param name="publish_default_velocities" value="true"/>
+      <param name="publish_default_efforts" value="true"/>
+      <param name="rate" value="100"/>
+    </node>
+  </group>
+
+</launch>

@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<robot xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller" xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface" xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <selfCollide>true</selfCollide>
+    <xacro:macro name="lbr4" params="parent name *origin">
+        <xacro:property name="M_PI" value="3.1415926535897931" />
+	<xacro:property name="velocity_scale" value="1.0"/>
+	<xacro:property name="effort_scale" value="10.0"/>
+	
+	<xacro:property name="M_PI" value="3.1415926535897931" />
+
+	<xacro:property name="damping_factor" value="0.1"/>
+
+	<xacro:property name="d0" value="${damping_factor*2.0}"/>
+	<xacro:property name="d1" value="${damping_factor*1.8}"/>
+	<xacro:property name="d2" value="${damping_factor*1.0}"/>
+	<xacro:property name="d3" value="${damping_factor*1.5}"/>
+	<xacro:property name="d4" value="${damping_factor*1.2}"/>
+	<xacro:property name="d5" value="${damping_factor*1.0}"/>
+	<xacro:property name="d6" value="${damping_factor*1.0}"/>
+
+	<xacro:property name="friction_factor" value="1.0"/>
+	
+	<xacro:property name="f0" value="${friction_factor*1.0}"/>
+	<xacro:property name="f1" value="${friction_factor*1.0}"/>
+	<xacro:property name="f2" value="${friction_factor*1.0}"/>
+	<xacro:property name="f3" value="${friction_factor*1.0}"/>
+	<xacro:property name="f4" value="${friction_factor*0.4}"/>
+	<xacro:property name="f5" value="${friction_factor*0.1}"/>
+	<xacro:property name="f6" value="${friction_factor*0.1}"/>
+
+   
+        <!-- joint between {parent} and arm_0_link -->
+        <joint name="${parent}_base" type="fixed">
+            <xacro:insert_block name="origin" />
+            <parent link="${parent}" />
+            <child link="${name}_0_link" />
+        </joint>
+        <link name="${name}_0_link">
+        <inertial>
+            <origin xyz="0.0099787706820535227 -0.00048169854600738104 -0.25485509312792326" rpy="0.503323678478 -0.189146421623 0.277526064738" />
+            <mass value="1.5" />
+            <inertia ixx="0.00805112828804" ixy="0" ixz="0" iyy="0.00845152236845" iyz="0" izz="0.00863585824764" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+            <geometry>
+                <mesh filename="package://ll4ma_robots_description/meshes/lbr4/link0.stl" />
+            </geometry>
+            <material name="color_j1" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+            <geometry>
+                <mesh filename="package://ll4ma_robots_description/meshes/lbr4/link0.dae" />
+            </geometry>
+        </collision>
+        </link>
+
+        <!-- joint between arm_0_link and arm_1_link -->
+        <joint name="${name}_j0" type="revolute">
+            <parent link="${name}_0_link" />
+            <child link="${name}_1_link" />
+            <!--origin xyz="0 0 0.103" rpy="0 0 0" /-->
+            <origin xyz="0 0 0.11" rpy="0 0 0" />
+            <axis xyz="0 0 1" />
+            <dynamics friction="${f0}" damping="${d0}" />
+            <limit lower="-2.96" upper="2.96" effort="${effort_scale*200}" velocity="${velocity_scale * 112.5 * M_PI / 180}" />
+        </joint>
+        <link name="${name}_1_link">
+        <inertial>
+            <origin xyz="2.1826998880744087e-05 -0.021623840412335664 -0.07915171924289198" rpy="0.239538165056 0.00537995201801 0.0492155584082" />
+            <mass value="1.5" />
+            <inertia ixx="0.0129545076394" ixy="0" ixz="0" iyy="0.0128178432409" iyz="0" izz="0.00442072765916" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+            <geometry>
+                <mesh filename="package://ll4ma_robots_description/meshes/lbr4/link1.stl" />
+            </geometry>
+            <material name="color_j1" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+            <geometry>
+                <mesh filename="package://ll4ma_robots_description/meshes/lbr4/link1.dae" />
+            </geometry>
+        </collision>
+        </link>
+        <!-- joint between arm_1_link and arm_2_link -->
+        <joint name="${name}_j1" type="revolute">
+            <parent link="${name}_1_link" />
+            <child link="${name}_2_link" />
+	    <limit lower="${-120 * M_PI / 180}" upper="${120 * M_PI / 180}" effort="${effort_scale * 200}" velocity="${velocity_scale * 112.5 * M_PI / 180}" />
+
+            <dynamics friction="${f1}" damping="${d1}"/>
+                    
+            <origin xyz="0 0 0.20" rpy="0 0 0" />
+            <!--origin xyz="0 0 0.2005" rpy="0 0 0"/-->
+            <!--origin xyz="0 0 0.2105" rpy="0 0 0" /-->
+            <axis xyz="0 -1 0" />
+            <!--limit effort="1000" velocity="10" /-->
+        </joint>
+        <link name="${name}_2_link">
+        <inertial>
+            <origin xyz="-0.0010097053542516513 0.028478464648332931 0.082033627936009448" rpy="0.252444092172 -0.0167820344187 0.0575928285281" />
+            <mass value="1.5" />
+            <inertia ixx="0.0132950018592" ixy="0" ixz="0" iyy="0.0131003199685" iyz="0" izz="0.0044657387969" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+            <geometry>
+                <mesh filename="package://ll4ma_robots_description/meshes/lbr4/link2.stl" />
+            </geometry>
+            <material name="color_j2" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+            <geometry>
+                <mesh filename="package://ll4ma_robots_description/meshes/lbr4/link2.dae" />
+            </geometry>
+        </collision>
+        </link>
+        <!-- joint between arm_2_link and arm_3_link -->
+        <joint name="${name}_j2" type="revolute">
+            <parent link="${name}_2_link" />
+            <child link="${name}_3_link" />
+            <origin xyz="0 0 0.192" rpy="0 0 0" />
+            <!-- <origin xyz="0 0 0.20" rpy="0 0 0.8" /> -->
+            <axis xyz="0 0 1" />
+            <limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="${effort_scale * 100}" velocity="${velocity_scale * 112.5 * M_PI / 180}" />
+
+            <dynamics friction="${f2}" damping="${d2}"/>
+         
+        </joint>
+        <link name="${name}_3_link">
+        <inertial>
+            <origin xyz="-0.00068512472584392442 0.022787627643261723 -0.078806475454300237" rpy="-0.211279484805 -0.0186487662306 -0.00721347462905" />
+            <mass value="1.5" />
+            <inertia ixx="0.0127763513867" ixy="0" ixz="0" iyy="0.0128011372133" iyz="0" izz="0.0043627376553" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+            <geometry>
+                <mesh filename="package://ll4ma_robots_description/meshes/lbr4/link3.stl" />
+            </geometry>
+            <material name="color_j3" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+            <geometry>
+                <mesh filename="package://ll4ma_robots_description/meshes/lbr4/link3.dae" />
+            </geometry>
+        </collision>
+        </link>
+
+        <!-- joint between arm_3_link and arm_4_link -->
+        <joint name="${name}_j3" type="revolute">
+            <parent link="${name}_3_link" />
+            <child link="${name}_4_link" />
+            <!--origin xyz="0 0.003 0.21" rpy="0 0 0" /-->
+            <origin xyz="0 0 0.20" rpy="0 0 0" />
+            <axis xyz="0 1 0" />
+	    <limit lower="${-120 * M_PI / 180}" upper="${120 * M_PI / 180}" effort="${effort_scale * 100}" velocity="${velocity_scale * 112.5 * M_PI / 180}" />
+
+            <dynamics friction="${f3}" damping="${d3}"/>
+        
+            <!--limit effort="1000" velocity="10" /-->
+        </joint>
+        <link name="${name}_4_link">
+        <inertial>
+            <origin xyz="-0.00025120620404353643 0.027040543208881447 0.082599870266635594" rpy="0.259090664398 -0.00225330262131 0.0469419954367" />
+            <mass value="1.5" />
+            <inertia ixx="0.0132276730313" ixy="0" ixz="0" iyy="0.0130734228464" iyz="0" izz="0.00439977729281" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+            <geometry>
+                <mesh filename="package://ll4ma_robots_description/meshes/lbr4/link4.stl" />
+            </geometry>
+            <material name="color_j4" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+            <geometry>
+                <mesh filename="package://ll4ma_robots_description/meshes/lbr4/link4.dae" />
+            </geometry>
+        </collision>
+        </link>
+        <!-- joint between arm_4_link and arm_5_link -->
+        <joint name="${name}_j4" type="revolute">
+            <parent link="${name}_4_link" />
+            <child link="${name}_5_link" />
+            <!--origin xyz="0 0 0.193" rpy="0 0 0" /-->
+            <origin xyz="0 0 0.20" rpy="0 0 0" />
+            <axis xyz="0 0 1" />
+	    <limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="${effort_scale * 100}" velocity="${velocity_scale * 180.0 * M_PI / 180}" />
+
+            <dynamics friction="${f4}" damping="${d4}"/>
+                   
+	</joint>
+        <link name="${name}_5_link">
+        <inertial>
+            <origin xyz="-7.2951660343995983e-05 0.034300558520003806 -0.082836449419419589" rpy="-0.399346437469 -0.0238815557936 0.011018430381" />
+            <mass value="1.5" />
+            <inertia ixx="0.0124407882151" ixy="0" ixz="0" iyy="0.0124710412724" iyz="0" izz="0.00438005667842" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+            <geometry>
+                <mesh filename="package://ll4ma_robots_description/meshes/lbr4/link5.stl" />
+            </geometry>
+            <material name="color_j5" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+            <geometry>
+                <mesh filename="package://ll4ma_robots_description/meshes/lbr4/link5.dae" />
+            </geometry>
+        </collision>
+        </link>
+
+        <!-- joint between arm_5_link and arm_6_link -->
+        <joint name="${name}_j5" type="revolute">
+            <parent link="${name}_5_link" />
+            <child link="${name}_6_link" />
+            <origin xyz="0 0 0.19" rpy="0 0 0" />
+            <!--origin xyz="0 0 0.2" rpy="0 0 0" /-->
+            <axis xyz="0 -1 0" />
+	    <limit lower="${-120 * M_PI / 180}" upper="${120 * M_PI / 180}" effort="${effort_scale * 30}" velocity="${velocity_scale * 112.5 * M_PI / 180}" />
+
+            <dynamics friction="${f5}" damping="${d5}"/>
+        
+	</joint>
+        <link name="${name}_6_link">
+        <inertial>
+            <origin xyz="0.0033265785100209406 -0.00025060639771109469 0.0006250581115164501" rpy="0.0273247151986 -0.416007068876 -0.06463859276" />
+            <mass value="0.75" />
+            <inertia ixx="0.00284169077177" ixy="0" ixz="0" iyy="0.00298256896714" iyz="0" izz="0.00296892557443" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+            <geometry>
+                <mesh filename="package://ll4ma_robots_description/meshes/lbr4/link6.stl" />
+            </geometry>
+            <material name="color_j6" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+            <geometry>
+                <mesh filename="package://ll4ma_robots_description/meshes/lbr4/link6.dae" />
+            </geometry>
+        </collision>
+        </link>
+        <!-- joint between arm_6_link and arm_7_link -->
+        <joint name="${name}_j6" type="revolute">
+            <parent link="${name}_6_link" />
+            <child link="${name}_7_link" />
+            <origin xyz="0 0 0.078" rpy="0 0 0" />
+            <!--origin xyz="0 0 0.079" rpy="0 0 0" /-->
+            <axis xyz="0 0 1" />
+            <limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="${effort_scale * 30}" velocity="${velocity_scale * 112.5 * M_PI / 180}" />
+            <dynamics friction="${f6}" damping="${d6}"/>
+         
+	</joint>
+        <link name="${name}_7_link">
+        <inertial>
+            <origin xyz="-1.0508863000830793e-05 0.00049391465901896074 0.062507829615577853" rpy="-0.00140457256351 -0.0113238487485 -0.621939623896" />
+            <mass value="0.075" />
+            <inertia ixx="5.81502716972e-05" ixy="0" ixz="0" iyy="5.84472283068e-05" iyz="0" izz="9.68983240391e-05" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+            <geometry>
+                <mesh filename="package://ll4ma_robots_description/meshes/lbr4/link7.stl" />
+            </geometry>
+            <material name="color_j7" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+            <geometry>
+                <mesh filename="package://ll4ma_robots_description/meshes/lbr4/link7.dae" />
+            </geometry>
+        </collision>
+        </link>
+        <link name="lbr4_mount">
+        <visual>
+            <origin xyz="-0.0415 -0.0415 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ll4ma_robots_description/meshes/mounts/kuka_mount.stl" />
+            </geometry>
+            <material name="color_j7" />
+        </visual>
+        <collision>
+            <origin xyz="-0.0415 -0.0415 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ll4ma_robots_description/meshes/mounts/kuka_mount.stl" />
+            </geometry>
+        </collision>
+        </link>
+
+        <joint name="lb4_mount_joint" type="fixed">
+            <origin xyz="0 0.0 0.015" rpy="-${M_PI} 0 0" />
+            <parent link="${name}_7_link" />
+            <child link="lbr4_mount" />
+        </joint>
+
+	<link name="ati_link"/>
+	<joint name="lb4_ati_virtual_joint" type="fixed">
+            <origin xyz="0 0.0 0." rpy="0 0 0" />
+            <parent link="lbr4_mount" />
+            <child link="ati_link" />
+        </joint>
+	
+        <gazebo reference="${name}_0_link">
+            <material>Gazebo/Orange</material>
+        </gazebo>
+        <gazebo reference="${name}_1_link">
+            <material>Gazebo/Orange</material>
+        </gazebo>
+        <gazebo reference="${name}_2_link">
+            <material>Gazebo/Orange</material>
+        </gazebo>
+        <gazebo reference="${name}_3_link">
+            <material>Gazebo/Orange</material>
+        </gazebo>
+        <gazebo reference="${name}_4_link">
+            <material>Gazebo/Orange</material>
+        </gazebo>
+        <gazebo reference="${name}_5_link">
+            <material>Gazebo/Orange</material>
+        </gazebo>
+        <gazebo reference="${name}_6_link">
+            <material>Gazebo/Grey</material>
+        </gazebo>
+        <gazebo reference="${name}_7_link">
+            <material>Gazebo/Black</material>
+        </gazebo>
+    </xacro:macro>
+</robot>

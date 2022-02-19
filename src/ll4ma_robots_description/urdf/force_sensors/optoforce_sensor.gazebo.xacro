@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- need visible fixed joint for sensor -->  
+  <gazebo reference="optoforce_sensor_joint">
+    <provideFeedback>true</provideFeedback>
+    <disableFixedJointLumping>true</disableFixedJointLumping>
+  </gazebo>
+  
+  <gazebo reference="optoforce_model_link">
+    <gravity>true</gravity>
+    <material>Gazebo/Grey</material>
+  </gazebo>
+      
+  <gazebo>
+    <plugin name="ft_sensor" filename="libgazebo_ros_ft_sensor.so">
+      <robotNamespace>ft_sensor</robotNamespace>
+      <jointName>optoforce_sensor_joint</jointName>
+      <topicName>wrench</topicName>
+      <updateRate>100</updateRate>
+      <gaussianNoise>0.000</gaussianNoise>
+      <!--measure_direction>parent_to_child</measure_direction-->
+
+    </plugin>
+  </gazebo>
+
+</robot>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- This is for publishing a URDF fragment to add a custom end-effector to Baxter at runtime. -->
+  <!-- Currently only written for push stick with force sensor. Can add others if needed. -->
+  
+  <arg name="arm" default="right"/>
+  
+  <!-- ======================================================================================= -->
+
+  <node name="send_urdf_fragment" pkg="baxter_examples" type="send_urdf_fragment.py"
+	respawn="false" output="screen"
+	args="-f $(find ll4ma_robots_description)/urdf/end_effectors/urdf_fragment/$(arg arm)_push_stick_rig.urdf
+	      -l $(arg arm)_hand
+	      -j baxter_to_optoforce_mount"/>
+  
+</launch>

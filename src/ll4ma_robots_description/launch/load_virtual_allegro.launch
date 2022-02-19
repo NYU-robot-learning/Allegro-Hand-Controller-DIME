@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="rviz"         default="false"  doc="Launch rviz if true"                    />
+  <arg name="gazebo"       default="false" doc="Include Gazebo components if true."     />
+  <arg name="biotac"       default="false" doc="true if allegro has biotac attached"    />
+  <arg name="parent_tf"    default="palm_pose" doc="Parent tf name for the virtual hand model."    />
+  <arg name="virtual_ns" default="None" doc="namespace for virtual robot topics"/>
+  <arg name="tf_ns" value="$(arg virtual_ns)" unless="$(eval virtual_ns=='None')"/>
+  <arg name="tf_ns" value="" if="$(eval virtual_ns=='None')"/>
+  
+
+  
+  <arg name="rob_desc" value="$(arg virtual_ns)/robot_description" unless="$(eval virtual_ns=='None')"/>
+  <arg name="rob_desc" value="/robot_description" if="$(eval virtual_ns=='None')"/>
+
+  <!-- ========================================================================================== -->
+    
+  <node pkg="rviz" type="rviz" output="screen" name="rviz"
+	args="-d $(find ll4ma_robots_description)/config/robot.rviz" if="$(arg rviz)"/>
+
+  <param name="$(arg rob_desc)" command="
+        $(find xacro)/xacro '$(find ll4ma_robots_description)/robots/allegro_virtual.robot.xacro'
+	gazebo:=$(arg gazebo)
+	biotac:=$(arg biotac)
+    parent_tf:=$(arg parent_tf)
+        --inorder"/>
+        
+  <node name="virtual_hand_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+      <param name="tf_prefix" value="$(arg tf_ns)"/>
+      <remap unless="$(eval virtual_ns=='None')" from="/joint_states" to="/${arg virual_ns)/joint_states"/>
+      <remap unless="$(eval virtual_ns=='None')" from="robot_description" to="/${arg virual_ns)/robot_description"/>
+  </node>
+
+  <node name="virtual_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"
+      output="screen">
+    <rosparam param="source_list" unless="$(eval virtual_ns=='None')">
+      ["$(arg virtual_ns)/joint_states"]
+    </rosparam>
+    <param name="publish_default_velocities" value="true"/>
+    <param name="publish_default_efforts" value="true"/>
+    <param name="rate" value="100"/>
+    <remap unless="$(eval virtual_ns=='None')" from="/joint_states" to="/${arg virual_ns)/joint_states"/>
+    <remap unless="$(eval virtual_ns=='None')" from="robot_description" to="/${arg virual_ns)/robot_description"/>
+  </node>
+
+  <!--node pkg="tf" type="static_transform_publisher" name="virtual_allegro_static_tf" 
+      args="0 0 0 0 0 0 1 $(arg parent_tf) /$(arg virtual_ns)/$(arg parent_tf) 100"/-->
+
+</launch>

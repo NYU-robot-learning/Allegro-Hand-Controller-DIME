@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="lbr4">
+
+  <xacro:arg name="control"           default="false" />
+  <xacro:arg name="biotac"            default="false" />
+  <xacro:arg name="gazebo"            default="false"  />
+  <xacro:arg name="parent_tf"        default="grasp_object"  />
+
+  <xacro:include filename="$(find ll4ma_robots_description)/robots/allegro.robot.xacro">
+    <xacro:arg name="gazebo" value="$(arg gazebo)"/>
+    <xacro:arg name="control" value="$(arg control)"/>
+    <xacro:arg name="biotac" value="$(arg biotac)"/>
+  </xacro:include>
+  
+  <link name="$(arg parent_tf)" />
+  <joint name="$(arg parent_tf)_allegro" type="fixed">
+    <parent link="$(arg parent_tf)"/>
+    <child link="allegro_mount"/>
+    <origin xyz="0 0 0.01" rpy="0 0 0"/>
+  </joint>
+
+</robot>

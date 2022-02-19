@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package>
+  <name>ll4ma_robots_description</name>
+  <version>0.0.0</version>
+  <description>The ll4ma_robots_description package</description>
+  <maintainer email="bala@todo.todo">bala</maintainer>
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export> </export>
+
+</package>

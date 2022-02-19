@@ -38,7 +38,7 @@
 
   <!-- Visualization with rviz, only if arg VISUALIZE is set to true. Default is
        false, the allegro_viz.launch can be started separated. -->
-  <arg name ="VISUALIZE" default="true" />
+  <arg name ="VISUALIZE" default="false" />
   <include file="$(find allegro_hand_controllers)/launch/visualizer.launch"
            if="$(arg VISUALIZE)">
   </include>

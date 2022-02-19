@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="ft_sensor" default="false"/>
+  <xacro:arg name="robot_name" default="lbr4"/>
+
+  
+  <!-- ROS control plugin -->
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <!-- This tag gets rid of an error that popped up in version 8.6 -->
+      <legacyModeNS>true</legacyModeNS>
+    </plugin>
+  </gazebo>
+
+  <!-- Force/torque sensor -->
+  <xacro:if value="$(arg ft_sensor)">
+    <xacro:include filename="$(find ll4ma_robots_description)/urdf/force_sensors/optoforce_sensor.gazebo.xacro"/>
+  </xacro:if>
+  
+  <!-- Gazebo materials -->
+  <gazebo reference="$(arg robot_name)_0_link">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+  <gazebo reference="$(arg robot_name)_1_link">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+  <gazebo reference="$(arg robot_name)_2_link">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+  <gazebo reference="$(arg robot_name)_3_link">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+  <gazebo reference="$(arg robot_name)_4_link">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+  <gazebo reference="$(arg robot_name)_5_link">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+  <gazebo reference="$(arg robot_name)_6_link">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+  <gazebo reference="$(arg robot_name)_7_link">
+    <material>Gazebo/FlatBlack</material>
+  </gazebo>
+  <gazebo reference="$(arg robot_name)_8_link">
+    <material>Gazebo/FlatBlack</material>
+  </gazebo>
+
+  <!-- transmissions -->
+  <xacro:include filename="$(find ll4ma_robots_description)/urdf/lbr4/lbr4.transmission.xacro"/>
+  
+</robot>

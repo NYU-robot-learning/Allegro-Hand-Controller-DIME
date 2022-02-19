@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  
+  <!-- transmissions -->
+  <xacro:include filename="$(find ll4ma_robots_description)/urdf/allegro_right/allegro.transmission.xacro"/>
+  
+</robot>

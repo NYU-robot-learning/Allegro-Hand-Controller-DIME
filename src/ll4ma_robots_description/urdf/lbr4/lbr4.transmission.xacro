@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="effort_transmission" params="joint_id">
+    <transmission name="lbr4_trans${joint_id}">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="lbr4_j${joint_id}">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="lbr4_motor${joint_id}">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+  </xacro:macro>
+  
+  <effort_transmission joint_id="0"/>
+  <effort_transmission joint_id="1"/>
+  <effort_transmission joint_id="2"/>
+  <effort_transmission joint_id="3"/>
+  <effort_transmission joint_id="4"/>
+  <effort_transmission joint_id="5"/>
+  <effort_transmission joint_id="6"/>
+ 
+</robot>

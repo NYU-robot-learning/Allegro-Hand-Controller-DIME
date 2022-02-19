@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="launch_rviz" default="true"  doc="Launch rviz if true"/>
+  <arg name="rviz_config" default="$(find ll4ma_robots_description)/config/panda.rviz"/>
+  <arg name="use_jsp"     default="true"  doc="Use joint state publisher if true"/>
+  <arg name="use_jsp_gui" default="false" doc="Use joint state publisher GUI if true"/>
+  <arg name="link_prefix" default="panda" doc="Name prefix for robot links"/>
+  <arg name="ns"          default=""      doc="Namespace for robot description"/>
+  
+  <!-- ====================================================================================== -->
+    
+  <node if="$(arg launch_rviz)" name="rviz" pkg="rviz" type="rviz"
+	output="screen" args="-d $(arg rviz_config)"/>
+
+  <param name="$(arg ns)/robot_description"
+	 command="$(find xacro)/xacro '$(find ll4ma_robots_description)/robots/panda.robot.xacro'
+		  link_prefix:=$(arg link_prefix)
+		  --inorder"/>
+        
+  <node name="$(anon robot_state_publisher)" pkg="robot_state_publisher"
+	type="robot_state_publisher">
+    <remap from="joint_states" to="$(arg ns)/panda/joint_states"/>
+    <remap from="robot_description" to="$(arg ns)/robot_description"/>
+  </node>
+  
+  <node if="$(arg use_jsp)" name="$(anon joint_state_publisher)" pkg="joint_state_publisher"
+	type="joint_state_publisher" output="screen">
+    <param name="use_gui" value="$(arg use_jsp_gui)"/>
+    <remap from="joint_states" to="$(arg ns)/panda/joint_states"/>
+    <remap from="robot_description" to="$(arg ns)/robot_description"/>
+  </node>
+
+</launch>

@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="reflex_mount_mass" value="0.18"/>
+
+  <xacro:include filename="$(find ll4ma_robots_description)/urdf/xacro_macros/inertia_tensors.xacro"/>
+  
+  <link name="reflex_mount">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="${reflex_mount_mass}"/>
+      <xacro:cylinder_inertia m="${reflex_mount_mass}" r="0.041" h="0.013"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ll4ma_robots_description/meshes/mounts/reflex_mount.STL" />
+      </geometry>
+      <material name="LBR4_Grey" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ll4ma_robots_description/meshes/mounts/reflex_mount.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="reflex_mount">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+
+</robot>

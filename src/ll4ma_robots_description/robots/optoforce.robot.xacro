@@ -1,0 +1,77 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="lbr4">
+
+  <xacro:arg name="end_effector" default="None"  doc="[biotac_hold, push_stick,cube]"/>
+  <xacro:arg name="gazebo"       default="false"  />
+
+  <!-- ========================================================================================== -->
+  <!-- Convert arg to property for evaluation of string equality. TODO ideally this would just    -->
+  <!-- work by directly evaluating using the args but Adam couldn't get it to work.               -->
+  <xacro:property name="end_effector" value="$(arg end_effector)"/>
+  <xacro:property name="M_PI"         value="3.1415926535897931"/>
+  <xacro:property name="urdf_path"    value="$(find ll4ma_robots_description)/urdf"/>
+
+  <!-- ========================================================================================== -->
+  
+  <!-- Gazebo -->
+  <xacro:if value="$(arg gazebo)">
+    <xacro:include filename="${urdf_path}/lbr4/lbr4.gazebo.xacro">
+      <xacro:arg name="ft_sensor"  value="$(arg ft_sensor)"/>
+      <xacro:arg name="robot_name" value="$(arg robot_name)"/>
+    </xacro:include>
+  </xacro:if>
+
+  
+  <xacro:include filename="${urdf_path}/force_sensors/optoforce_sensor.urdf.xacro"/>
+  <link name="world" />
+
+  <joint name="optoforce_to_base" type="fixed">
+    <parent link="world"/>
+    <child link="optoforce_model_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Push-stick -->
+  <xacro:if value="${end_effector == 'push_stick'}">
+    <xacro:include filename="${urdf_path}/end_effectors/push_stick.urdf.xacro"/>
+    <xacro:include filename="${urdf_path}/mounts/optoforce_push_stick_mount.urdf.xacro"/>
+    
+    <xacro:optoforce_push_stick_mount/>
+    <xacro:push_stick/>
+    
+    <joint name="optoforce_to_push_stick_mount" type="fixed">
+      <xacro:if value="$(arg gazebo)">
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<parent link="optoforce_sensor_link"/>
+      </xacro:if>
+      <xacro:unless value="$(arg gazebo)">
+	<origin xyz="0 0 0.035" rpy="0 0 0"/>
+	<parent link="optoforce_model_link"/>
+      </xacro:unless>
+      
+      <child link="optoforce_push_stick_mount_link" />
+    </joint>
+    
+    <joint name="optoforce_mount_to_push_stick" type="fixed">
+      <origin xyz="0 0 0.01" rpy="0 0 0" />
+      <parent link="optoforce_push_stick_mount_link" />
+      <child link="push_stick_link" />
+    </joint>
+  </xacro:if>
+  
+  <xacro:if value="${end_effector == 'biotac_mount'}">
+    <xacro:include filename="${urdf_path}/end_effectors/biotac_mount.urdf.xacro"/>
+    <xacro:biotac_mount/>
+    <joint name="optoforce_to_biotac_mount" type="fixed">
+	<origin xyz="0 0 0.05" rpy="0 0 0"/>
+	<parent link="optoforce_model_link"/>
+      
+      <child link="biotac_mount_link" />
+    </joint>
+  </xacro:if>
+
+  <xacro:if value="${end_effector == 'cube'}">
+    <xacro:include filename="${urdf_path}/end_effectors/cube.urdf.xacro"/>
+    <xacro:cube_ee parent="optoforce_sensor_link"/>
+  </xacro:if>
+</robot>

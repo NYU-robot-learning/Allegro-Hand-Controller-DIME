@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="urdf"/>
+  <arg name="link"/>
+  <arg name="rviz_config" default="$(find ll4ma_robots_description)/config/panda.rviz"/>
+  
+  <!-- ====================================================================================== -->
+    
+  <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(arg rviz_config)"/>
+
+  <param name="robot_description"
+	 command="$(find xacro)/xacro '$(find ll4ma_robots_description)/urdf/$(arg urdf)' --inorder"/>
+
+  <node name="world_tf_publisher" pkg="tf" type="static_transform_publisher"
+        args="0 0 0 0 0 0 1 world $(arg link) 100"/>
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+  
+</launch>

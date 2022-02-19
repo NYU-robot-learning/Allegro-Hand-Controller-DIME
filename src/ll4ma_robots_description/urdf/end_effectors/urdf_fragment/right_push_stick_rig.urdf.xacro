@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<robot name="push_stick_rig" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="gazebo" default="false"/>
+  <xacro:property name="pi" value="3.1415926535897931"/>
+  
+  <xacro:include filename="$(find ll4ma_robots_description)/urdf/force_sensors/optoforce_sensor.urdf.xacro"/>
+  <xacro:include filename="$(find ll4ma_robots_description)/urdf/end_effectors/push_stick.urdf.xacro"/>
+  <xacro:include filename="$(find ll4ma_robots_description)/urdf/mounts/baxter_optoforce_mount.urdf.xacro"/>
+  <xacro:include filename="$(find ll4ma_robots_description)/urdf/mounts/optoforce_push_stick_mount.urdf.xacro"/>
+
+  <xacro:baxter_optoforce_mount/>
+  <xacro:optoforce_push_stick_mount/>
+  <xacro:push_stick/>
+
+  <joint name="baxter_to_optoforce_mount" type="fixed">
+    <origin xyz="-0.013 0 0" rpy="0 0 -${pi/2}" />
+    <parent link="right_hand" />
+    <child link="baxter_optoforce_mount_link" />
+  </joint>
+  
+  <joint name="optoforce_mount_to_optoforce" type="fixed">
+    <origin xyz="0 0 0.01" rpy="0 0 ${-0.825 + pi}" />
+    <parent link="baxter_optoforce_mount_link" />
+    <child link="optoforce_model_link" />
+  </joint>
+  
+  <joint name="optoforce_to_push_stick_mount" type="fixed">
+    <origin xyz="0 0 0.035" rpy="0 0 0" />
+    <parent link="optoforce_model_link" />
+    <child link="optoforce_push_stick_mount_link" />
+  </joint>
+    
+  <joint name="optoforce_mount_to_push_stick" type="fixed">
+    <origin xyz="0 0 0.01" rpy="0 0 0" />
+    <parent link="optoforce_push_stick_mount_link" />
+    <child link="push_stick_link" />
+  </joint>
+    
+</robot>

@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="index_transmission" params="joint_id">
+    <transmission name="allegro_index_j${joint_id}">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="index_joint_${joint_id}">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="allegro_index_motor${joint_id}">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+  </xacro:macro>
+  
+  <xacro:macro name="middle_transmission" params="joint_id">
+    <transmission name="allegro_middle_j${joint_id}">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="middle_joint_${joint_id}">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="allegro_middle_motor${joint_id}">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+  </xacro:macro>
+  
+  <xacro:macro name="ring_transmission" params="joint_id">
+    <transmission name="allegro_ring_j${joint_id}">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="ring_joint_${joint_id}">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="allegro_ring_motor${joint_id}">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+  </xacro:macro>
+
+  <xacro:macro name="thumb_transmission" params="joint_id">
+    <transmission name="allegro_thumb_j${joint_id}">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="thumb_joint_${joint_id}">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="allegro_thumb_motor${joint_id}">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+  </xacro:macro>
+
+  <index_transmission joint_id="0"/>
+  <index_transmission joint_id="1"/>
+  <index_transmission joint_id="2"/>
+  <index_transmission joint_id="3"/>
+  <middle_transmission joint_id="0"/>
+  <middle_transmission joint_id="1"/>
+  <middle_transmission joint_id="2"/>
+  <middle_transmission joint_id="3"/>
+  <ring_transmission joint_id="0"/>
+  <ring_transmission joint_id="1"/>
+  <ring_transmission joint_id="2"/>
+  <ring_transmission joint_id="3"/>
+  <thumb_transmission joint_id="0"/>
+  <thumb_transmission joint_id="1"/>
+  <thumb_transmission joint_id="2"/>
+  <thumb_transmission joint_id="3"/>
+  
+</robot>

@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  
+  <xacro:include filename="$(find ll4ma_robots_description)/urdf/xacro_macros/inertia_tensors.xacro"/>
+
+  <xacro:macro name="baxter_optoforce_mount">    
+    <link name="baxter_optoforce_mount_link">
+      <inertial>
+        <origin xyz="0.000291585 0.002129556 0.005058159" rpy="0 0 0" />
+        <mass value="0.048" />
+	<xacro:cuboid_inertia m="0.048" x="0.07" y="0.07" z="0.01"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+	  <mesh
+	      filename="package://ll4ma_robots_description/meshes/mounts/baxter_optoforce_mount.STL"
+	      scale="0.001 0.001 0.001"/>
+        </geometry>
+	<material name="green">
+          <color rgba="0 1 0 1"/>
+	</material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+	  <mesh
+	      filename="package://ll4ma_robots_description/meshes/mounts/baxter_optoforce_mount.STL"
+	      scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+  
+</robot>

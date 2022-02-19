@@ -1,0 +1,35 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="fingertip">
+<link name="middle_tip">
+      <visual>
+	<!--origin rpy="0.0 1.57 1.57" xyz="-0.015 -0.0  -0.04" /-->
+      <origin rpy="0.0 1.57 1.57" xyz="-0.00277 0.0  -0.00545" />
+
+	<!--origin rpy="0.1 0 1.57" xyz="0.0102 -0.01  -0.055" /-->
+        <geometry>
+            <mesh filename="package://ll4ma_robots_description/meshes/biotac/biotac_sensor.stl" />
+        </geometry>
+	        <material name="Green">
+            <color rgba="0.0 0.8 .0 1" />
+        </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.01 0.01 0.025" />
+      </geometry>
+      <origin rpy="0 0.3 0" xyz="-0.0025 0 -0.009" />
+    </collision>
+    <inertial>
+        <mass value="0.021" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="9.68e-07" ixy="0" ixz="0" iyy="9.68e-07" iyz="0" izz="9.68e-07" />
+    </inertial>
+    </link>
+    
+    <link name="middle_biotac_origin"/>
+    <joint name="middle_tip_bt" type="fixed">
+      <origin rpy="${0.0 * pi} ${-0.38875 * pi} ${0.0 * pi}" xyz="0.0005 0.00155 0.0155"/>
+      <parent link="middle_tip"/>
+      <child link="middle_biotac_origin"/>
+    </joint>
+
+</robot>

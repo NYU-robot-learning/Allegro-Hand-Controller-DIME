@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  
+  <xacro:macro name="baxter_push_stick_mount">
+    
+    <link name="baxter_push_stick_mount_link">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <mass value="0.001" />
+        <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+	  <mesh
+	      filename="package://ll4ma_robots_description/meshes/mounts/baxter_push_stick_mount.STL"
+	      scale="0.001 0.001 0.001"/>
+        </geometry>
+	<material name="green">
+          <color rgba="0 1 0 1"/>
+	</material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+	  <mesh
+	      filename="package://ll4ma_robots_description/meshes/mounts/baxter_push_stick_mount.STL"
+	      scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+    </link>
+    
+    <joint name="baxter_to_push_stick_mount" type="fixed">
+      <origin xyz="-0.045 0.035 0" rpy="${pi/2} 0 0" />
+
+      <!-- TODO allow for right or left hand through args -->
+      <parent link="left_hand" />
+      <child link="baxter_push_stick_mount_link" />
+    </joint>
+        
+  </xacro:macro>
+  
+</robot>

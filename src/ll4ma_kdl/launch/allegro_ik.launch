@@ -1,0 +1,5 @@
+<launch>
+<node name="allegro_ik_demo" pkg="urlg_robots_ik_solvers" type="allegro_ik_demo" output="screen" ns="allegro_hand_right"/>
+<node name="allegro_trac_generic" pkg="urlg_robots_ik_solvers" type="allegro_trac_generic" output="screen" />
+
+</launch>

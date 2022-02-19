@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="slanted_table">
+
+  <xacro:arg name="include_slant" default="true"/>
+  <xacro:arg name="height"        default="1.0"/>
+  <xacro:arg name="angle"         default="0.0"/>
+  <xacro:arg name="bowl"          default="false"/>
+  <xacro:arg name="cylinder"      default="false"/>
+
+  <!-- ========================================================================================== -->
+  
+  <xacro:property name="h" value="$(arg height)"/>
+  <xacro:property name="theta" value="$(arg angle)"/>
+  <xacro:property name="pi" value="3.14159265359"/>
+  
+  <xacro:macro name="support_model">
+    <origin xyz="0 0 ${h/2}" rpy="0 0 0" />
+    <geometry>
+      <box size="1.0 0.5 ${h}" />
+    </geometry>
+  </xacro:macro>
+
+  <xacro:macro name="table_surface_model">
+    <origin xyz="0 0.5 ${h-0.05}" rpy="0 ${theta*pi/180} 0" />
+    <geometry>
+      <box size="1.0 0.5 0.1" />
+    </geometry>
+  </xacro:macro>
+
+  <!-- ========================================================================================== -->
+  
+  <link name="support_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1000"/>
+      <inertia ixx="1.0"  ixy="0"  ixz="0" iyy="1.0" iyz="0" izz="1.0" />
+    </inertial>
+    <visual>
+      <xacro:support_model/>
+      <material name="table_color">
+	<color rgba="${210/255} ${170/255} ${120/255} 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <xacro:support_model/>
+    </collision>
+  </link>
+
+  <xacro:if value="$(arg include_slant)">
+    <link name="table_surface_link">
+      <inertial>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<mass value="10"/>
+	<inertia ixx="1.0"  ixy="0"  ixz="0" iyy="1.0" iyz="0" izz="1.0" />
+      </inertial>
+      <visual>
+	<xacro:table_surface_model/>
+	<material name="table_color">
+	  <color rgba="${210/255} ${170/255} ${120/255} 1.0"/>
+	</material>
+      </visual>
+      <collision>
+	<xacro:table_surface_model/>
+      </collision>
+    </link>
+    
+    <joint name="suface_support_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="support_link" />
+      <child link="table_surface_link" />
+    </joint>
+    
+    <gazebo reference="table_surface_link">
+      <mu1>0.01</mu1> <!-- TEMPORARY can make higher to be more like a table -->
+      <mu2>0.01</mu2> 
+      <material>Gazebo/Wood</material>
+    </gazebo>
+  </xacro:if>
+
+  <xacro:if value="$(arg bowl)">
+    <xacro:include filename="$(find ll4ma_robots_description)/urdf/environment/bowl.urdf.xacro"/>
+    <joint name="bowl_to_table" type="fixed">
+      <origin xyz="0 0.5 ${h}" rpy="0 0 0"/>
+      <parent link="table_surface_link"/>
+      <child link="bowl_link"/>
+    </joint>
+  </xacro:if>
+
+  <xacro:if value="$(arg cylinder)">
+    <link name="cylinder_link">
+      <inertial>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<mass value="1.0"/>
+	<inertia ixx="1.0"  ixy="0"  ixz="0" iyy="1.0" iyz="0" izz="1.0" />
+      </inertial>
+      <visual>
+	<origin xyz="0 0 0" rpy="0 0 0" />
+	<geometry>
+	  <cylinder radius="0.3" length="0.1"/>
+	</geometry>
+      </visual>
+      <collision>
+	<origin xyz="0 0 0" rpy="0 0 0" />
+	<geometry>
+	  <cylinder radius="0.3" length="0.1"/>
+	</geometry>
+      </collision>
+    </link>
+
+    <joint name="cylinder_surface_joint" type="fixed">
+      <origin xyz="-0.2 0.5 ${h+0.05}" rpy="0 0 0" />
+      <parent link="table_surface_link" />
+      <child link="cylinder_link" />
+    </joint>
+    
+    <gazebo reference="cylinder_link">
+      <mu1>0.01</mu1> <!-- TEMPORARY can make higher to be more like a table -->
+      <mu2>0.01</mu2> 
+      <material>Gazebo/Wood</material>
+    </gazebo>
+  </xacro:if>
+
+  <gazebo reference="support_link">
+    <mu1>0.01</mu1> <!-- TEMPORARY can make higher to be more like a table -->
+    <mu2>0.01</mu2> 
+    <material>Gazebo/Wood</material>
+  </gazebo>
+  
+</robot>
