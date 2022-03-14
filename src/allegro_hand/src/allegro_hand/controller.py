@@ -33,7 +33,7 @@ DEFAULT_VAL = None
 class AllegroController(object):
     def __init__(self):
         try:
-            rospy.init_node('allegro_node')
+            rospy.init_node('allegro_hand_node')
         except:
             pass
 

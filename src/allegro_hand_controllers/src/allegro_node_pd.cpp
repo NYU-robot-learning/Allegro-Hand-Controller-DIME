@@ -30,8 +30,8 @@ double max_tau_des = 0.65;
 // Loop rate < 333Hz is recommended since states are received at 333Hz.
 double loop_rate = 300.0;
 
-// TODO: Convert this to a ROS subscriber when robot is attached.
-std::vector<double> g_vec = {0, 0, 0};
+// Initialiing the gravity vector
+std::vector<double> g_vec(3);
 
 // Rosparam names
 // K_p values
@@ -82,11 +82,9 @@ AllegroNodePD::AllegroNodePD()
 
   initController(whichHand);
 
-  lib_cmd_sub = nh.subscribe(
-          LIB_CMD_TOPIC, 1, &AllegroNodePD::libCmdCallback, this);
+  lib_cmd_sub = nh.subscribe(LIB_CMD_TOPIC, 1, &AllegroNodePD::libCmdCallback, this);
 
-  joint_cmd_sub = nh.subscribe(
-          DESIRED_STATE_TOPIC, 1, &AllegroNodePD::setJointCallback, this);
+  joint_cmd_sub = nh.subscribe(DESIRED_STATE_TOPIC, 1, &AllegroNodePD::setJointCallback, this);
                 
   grav_rot_sub = nh.subscribe(GRAV_ROT_TOPIC, 1, //300, // queue size
                                 &AllegroNodePD::handGravityVectorCallback, this);
@@ -135,6 +133,8 @@ void AllegroNodePD::libCmdCallback(const std_msgs::String::ConstPtr &msg) {
     gravity_comp_ = false;
     mutex->unlock();
   }
+
+  // Setting the hand at gravity comp mode
   else if (lib_cmd.compare("gravcomp") == 0) {
     ROS_INFO("Using grav comp!");
     gravity_comp_ = true;
@@ -165,9 +165,6 @@ void AllegroNodePD::computeDesiredTorque() {
 
   // Obtaining the gravity compensation torques using the dynamic gravity vector
   kdl_comp->update_G(g_vec);
-
-  // ROS_INFO("Updated gravity vector inner: %f, %f, %f", kdl_comp->_allegro_kdl->g_vec_[0], kdl_comp->_allegro_kdl->g_vec_[1], kdl_comp->_allegro_kdl->g_vec_[2]);
-  // ROS_INFO("Updated gravity vector outer: %f, %f, %f", kdl_comp->_g_vec[0], kdl_comp->_g_vec[1], kdl_comp->_g_vec[2]);
 
   kdl_comp->get_G(current_position_eigen, tau_g);
 
@@ -231,8 +228,6 @@ void AllegroNodePD::computeDesiredTorque() {
     for (int i = 0; i < DOF_JOINTS; i++) {
         grav_comp_torques.header.stamp = tnow;
         commanded_joint_states.header.stamp = tnow;
-        // grav_comp_torques.name[i] = desired_joint_state.name[i];
-        // commanded_joint_states.name[i] = desired_joint_state.name[i];
         grav_comp_torques.effort[i] = tau_g[i];
     }
 

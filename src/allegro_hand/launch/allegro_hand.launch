@@ -30,7 +30,6 @@
        as an input for both the robot_description and for the grasping library controllers. -->
   <arg name="HAND" default="right"/>
   <arg name="NUM" default="0"/>
-  <arg name="GAZEBO" default="false"/>
   <arg name="LOG" default="false"/>
 
   <!-- Use the joint_state_publisher for *commanded* joint angles. -->

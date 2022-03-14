@@ -5,7 +5,7 @@
     <description>parameters: calibration zeros, controller parameters</description>
 
     <!-- One maintainer tag required, multiple allowed, one person per tag -->
-    <maintainer email="felix.duvallet@epfl.ch">Felix Duvallet</maintainer>
+    <maintainer email="sridhar@nyu.edu">Sridhar Pandian Arunachalam</maintainer>
 
     <buildtool_depend>catkin</buildtool_depend>
 

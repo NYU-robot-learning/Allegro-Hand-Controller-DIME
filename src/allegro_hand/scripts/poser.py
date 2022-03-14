@@ -1,12 +1,12 @@
 #!/usr/bin/python3
+# Basic imports
 import rospy
-import yaml
 import numpy as np
+import yaml
 
+# Allegro hand controller imports
 from allegro_hand.controller import AllegroController
-
-# Yaml path for joint pose angles
-YAML_PATH = '/home/sridhar/dexterous_arm/arm_stuff/src/Allegro-hand-controller-noetic/src/allegro_hand_parameters/poses.yaml'
+from allegro_hand.utils import find_file
 
 def perform_poses(yaml_file):
     # Initializing the controller
@@ -32,4 +32,8 @@ def perform_poses(yaml_file):
     print('Finished all the poses!')
 
 if __name__ == '__main__':
-    perform_poses(YAML_PATH)
+    # Finding the parameter package path
+    yaml_file_path = find_file("allegro_hand_parameters", "poses.yaml")
+
+    # Performing the poses
+    perform_poses(yaml_file_path)
