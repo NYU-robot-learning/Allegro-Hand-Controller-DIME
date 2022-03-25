@@ -1,5 +1,5 @@
-# Allegro Hand Controller - Noetic
-This repository contains the information to setup the ROS Noetic based controller to control the Allegro Hand. We would advice you to run the `setup.sh` file in the base repository for convenience and use this as a debugging tool.
+# Allegro Hand Controller - DIME
+This repository contains the information to setup the ROS Noetic based controller part of [DIME](https://arxiv.org/abs/2203.13251) to control the Allegro Hand. We would advice you to run the `setup.sh` file in the base repository for convenience and use this as a debugging tool.
 
 ## Contents
 1. [Requirements](#requirements)
@@ -58,4 +58,16 @@ roslaunch allegro_hand allegro_hand.launch
 If you want to launch the visualizer along with the roslaunch file, you can run the following command:
 ```
 roslaunch allegro_hand allegro_hand.launch VISUALIZE:=true
+```
+
+## Citation
+
+If you use this repo in your research, please consider citing the paper as follows:
+```
+@article{arunachalam2022dime,
+  title={Dexterous Imitation Made Easy: A Learning-Based Framework for Efficient Dexterous Manipulation},
+  author={Sridhar Pandian Arunachalam and Sneha Silwal and Ben Evans and Lerrel Pinto},
+  journal={arXiv preprint arXiv:2203.13251},
+  year={2022}
+}
 ```
