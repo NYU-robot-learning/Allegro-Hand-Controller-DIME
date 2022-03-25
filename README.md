@@ -1,5 +1,5 @@
 # Allegro Hand Controller - DIME
-This repository contains the information to setup the ROS Noetic based controller part of [DIME](https://arxiv.org/abs/2203.13251) to control the Allegro Hand. We would advice you to run the `setup.sh` file in the base repository for convenience and use this as a debugging tool.
+This repository contains the information to setup the ROS Noetic based Allegro Hand controller package which is a part of the official implementation of [DIME](https://arxiv.org/abs/2203.13251). We would advice you to run the `setup.sh` file in the base repository for convenience and use this as a debugging tool.
 
 ## Contents
 1. [Requirements](#requirements)
