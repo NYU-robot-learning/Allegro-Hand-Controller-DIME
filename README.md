@@ -1,5 +1,5 @@
 # Allegro Hand Controller - Noetic
-This repository contains the information to setup the ROS Noetic based controller to control the Allegro Hand. We would advice you to run the `setup.sh` file in the base repository for convenience and use this as a debugging tool.
+This repository contains the information to setup the ROS Noetic based controller to control the Allegro Hand. We would advice you to run the `setup.sh` file in the [base repository](https://github.com/NYU-robot-learning/DIME-Controllers) for convenience and use this as a debugging tool.
 
 ## Contents
 1. [Requirements](#requirements)
@@ -18,7 +18,26 @@ Before setting up the controller, we need to ensure that we have all the drivers
    ```
    sudo apt-get install cmake gcc g++ libpopt-dev
    ```
-2. Set up the necessary drivers using the `allegro_driver_setup.sh` script in #include-base-url-here. 
+2. Set up the necessary drivers using the following commands:
+   ```
+   cd ../
+   mkdir drivers && cd drivers
+   
+   wget https://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-8.12.0.tar.gz
+   tar -xvzf peak-linux-driver-8.12.0.tar.gz
+   cd peak-linux-driver-8.12.0
+   make clean
+   make NET=NO_NETDEV_SUPPORT
+   sudo make install 
+   sudo modprobe pcan
+
+   cd ..
+   wget https://www.peak-system.com/quick/BasicLinux
+   tar -xvzf BasicLinux
+   cd PCAN-Basic_Linux-4.5.4/libpcanbasic
+   make
+   sudo make install
+   ``` 
 3. Test the installation of the drivers using the following command:
    ```
    cat /proc/pcan
@@ -32,6 +51,10 @@ Before setting up the controller, we need to ensure that we have all the drivers
    ```
    sudo ./driver/pcan_make_devices 2
    ```
+6. After installing the drivers install [ROS](http://wiki.ros.org/noetic/Installation/Ubuntu) followed by it's PCAN package:
+   ```
+   sudo apt-get install ros-noetic-libpcan 
+   ```
 
 ## Setting up DART Sim <a name="dart-sim"></a>
 We need to setup DART Sim for the ll4ma-kdl packages to run. Run the following commands:
@@ -42,7 +65,7 @@ sudo apt-get install libdart6-all-dev
 ```
 
 ## Launching the Controller <a name="launch-controller"></a>
-After setting up the drivers and DART sim, you can run catkin_make from the base controller directory (where you have both - Kinova JACO arm controller and Allegro Hand controller). Do the following from this directory:
+After setting up the drivers and DART sim, you can run catkin_make from the [base](https://github.com/NYU-robot-learning/DIME-Controllers) controller directory (where you have both - Kinova JACO arm controller and Allegro Hand controller). Do the following from this directory:
 ```
 cd <base-controller-dir>
 catkin_make
